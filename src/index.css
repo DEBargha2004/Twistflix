@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+    background-color: black;
+}
+
+::-webkit-scrollbar{
+    display: none;
+}
+
+.row{
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns:20% ;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+}
+
+.card{
+    overflow: visible;
+}
