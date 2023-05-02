@@ -1,19 +1,23 @@
 import React from 'react'
-import urls from '../assets/url';
+import urls, { apikey } from '../assets/url';
 import Row from './Row';
 import { useState, useEffect, useContext } from 'react';
 import MovieContext from '../hooks/context';
 import genre from '../functions/genre';
 import removeDup from '../functions/removeDup'
-import { apikey } from '../assets/url';
+import { useNavigate } from 'react-router-dom';
 
 function MoviePage({ movieItem, row }) {
+  const navigate = useNavigate()
   const { genre_ids } = movieItem
-  const [currentRow, setCurrentRow] = useState([])
+  const [similarMovies, setSimilarMovies] = useState([])
   const [genreType, setGenreType] = useState([])
   const [cast, setCast] = useState([])
+  const [relatedVideos, setRelatedVideos] = useState([])
   const [scrollReset, setScrollReset] = useState(false)
-  const { genres } = useContext(MovieContext)
+  const { genres, setGlobalTrailer } = useContext(MovieContext)
+  const [localTrailer, setLocalTrailer] = useState([])
+  const scroller = { scrollReset, setScrollReset }
 
 
   function ifIncludes(ids, compare) {
@@ -23,14 +27,23 @@ function MoviePage({ movieItem, row }) {
     }
   }
 
-  async function callCast() {
+  async function callCast_Videos() {
     let response = await fetch(`https://api.themoviedb.org/3/movie/${movieItem.id}/credits?api_key=${apikey}`)
     response = await response.json()
     setCast(response.cast)
+    response = await fetch(`https://api.themoviedb.org/3/movie/${movieItem.id}/videos?api_key=${apikey}&language=en-US}`)
+    response = await response.json()
+    setRelatedVideos(response.results)
+    setLocalTrailer(relatedVideos.find(item => item.type === 'Trailer'))
+  }
+
+  function handleGlobalPlayer() {
+    setGlobalTrailer(localTrailer)
+    navigate('/player')
   }
 
   useEffect(() => {
-    callCast()
+    callCast_Videos()
     let movieContainer = []
     row.forEach(element => {
       if (!element.card_type) {
@@ -39,7 +52,7 @@ function MoviePage({ movieItem, row }) {
         }
       }
     });
-    setCurrentRow(removeDup(movieContainer, movieItem))
+    setSimilarMovies(removeDup(movieContainer, movieItem))
     setScrollReset(true)
   }, [movieItem])
   useEffect(() => {
@@ -72,12 +85,29 @@ function MoviePage({ movieItem, row }) {
               ))
             }
           </p>
-          <button className='bg-white mr-2 mt-12 text-lg uppercase px-5 py-2 font-semibold rounded-md transition-all hover:bg-[#ffffffaf]'>Play</button>
+          <p className='mt-5 text-white text-lg'>
+            {
+              `Release Date - `
+            }
+            <span className='font-semibold'>{movieItem.release_date}</span>
+          </p>
+          <p className='mt-5 text-white text-lg'>
+            {
+              `Rating - `
+            }
+            <span className='font-semibold'>
+              {
+                movieItem.vote_average
+              }
+            </span>
+          </p>
+          <button className='bg-white mr-2 mt-12 text-lg uppercase px-5 py-2 font-semibold rounded-md transition-all hover:bg-[#ffffffaf]' onClick={() => handleGlobalPlayer()}>Play</button>
         </div>
       </div>
       <div>
-        <Row scrollReset={scrollReset} type='cast' setScrollReset={setScrollReset} List={cast} title='Cast' />
-        <Row scrollReset={scrollReset} type='movie' setScrollReset={setScrollReset} List={currentRow} title='Similar Movies'></Row>
+        <Row type='cast' List={cast} title='Cast' {...scrollReset} />
+        <Row type='related' List={relatedVideos} title='Related Videos'  {...scroller} />
+        <Row type='movie' List={similarMovies} title='Similar Movies' {...scroller}></Row>
       </div>
     </>
   )

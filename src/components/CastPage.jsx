@@ -13,7 +13,6 @@ function CastPage({ Cast }) {
     async function callSpecificCast() {
         let response = await fetch(`https://api.themoviedb.org/3/person/${Cast.id}?api_key=${apikey}`)
         response = await response.json()
-        console.log(response);
         setCurrentCast(response)
         response = await fetch(`https://api.themoviedb.org/3/person/${Cast.id}/movie_credits?api_key=${apikey}&language=en-US`)
         response = await response.json()
@@ -28,7 +27,7 @@ function CastPage({ Cast }) {
         <>
             <div className='flex justify-around m-10'>
                 <div className='flex-1 flex justify-center'>
-                    <div className='w-[400px] overflow-hidden rounded-lg'>
+                    <div className='w-[400px] h-fit overflow-hidden rounded-lg'>
                         <img src={`${urls.baseUrl}${Cast.profile_path}`} className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70 hover:bg-[#00000070]' alt="" />
                     </div>
                 </div>

@@ -7,7 +7,6 @@ function Castcard({ Item }) {
   const { setCombined_list } = useContext(MovieContext)
   const navigate = useNavigate()
   function CreateandRedirect(){
-    console.log('current card clicked is',Item);
     setCombined_list(prev => [...prev,{...Item,card_type:'cast'}])
     navigate(`/${Item.id}/${Item.original_name}`)
   }

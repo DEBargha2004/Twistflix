@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import genre from '../functions/genre'
 import { motion } from 'framer-motion'
 
-function Card({ index, Item:movieItem }) {
+function Card({ Item:movieItem }) {
     const { genres } = useContext(MovieContext)
     const [isHovering, setIsHovering] = useState(false)
     const movieCard = useRef(null)
@@ -35,8 +35,6 @@ function Card({ index, Item:movieItem }) {
         if (isHovering) {
             //let { bottom, top, height } = hoveredDiv.current.getBoundingClientRect()
             let movieCardStyle = movieCard.current.getBoundingClientRect()
-            console.log(movieCardStyle);
-            //console.log('hovered', hoveredDiv.current.getBoundingClientRect());
             let { left, right, bottom, top } = movieCardStyle
             const widndow_Width = window.innerWidth
             const widndow_Height = window.innerHeight
@@ -44,7 +42,6 @@ function Card({ index, Item:movieItem }) {
                 // setcardPosition(prev => ({
                 //     ...prev, x: 40
                 // }))
-                console.log('left');
                 if (widndow_Height - bottom < 59.55) {        // extreme bottom-left
                     setcardPosition(prev => ({
                         y: bottom - widndow_Height, x: 40, from: 'bottom'
@@ -63,7 +60,6 @@ function Card({ index, Item:movieItem }) {
                 // setcardPosition(prev => ({
                 //     ...prev, x: widndow_Width - (314)
                 // }))
-                console.log('right');
                 if (widndow_Height - bottom < 59.55) {        // extreme bottom-right
                     setcardPosition(prev => ({
                         y: bottom - widndow_Height, x: widndow_Width - (314), from: 'bottom'
@@ -81,14 +77,11 @@ function Card({ index, Item:movieItem }) {
                 // setcardPosition(prev => ({
                 //     ...prev, x: left
                 // }))
-                console.log('normal');
-                if (widndow_Height - bottom < 59.55) {
-                    console.log('normal bottom');     // normal bottom
+                if (widndow_Height - bottom < 59.55) {     // normal bottom
                     setcardPosition(prev => ({
                         x: left, y: bottom - widndow_Height, from: 'bottom'
                     }))
-                } else if (top < 0) {
-                    console.log('normal top');              // normal top
+                } else if (top < 0) {            // normal top
                     setcardPosition(prev => ({
                         x: left, y: -top, from: 'top'
                     }))
@@ -107,7 +100,6 @@ function Card({ index, Item:movieItem }) {
 
     return (
         <div
-            key={index}
             className="w-[250px] mx-1 rounded-md cursor-pointer"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}

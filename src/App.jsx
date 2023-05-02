@@ -7,26 +7,24 @@ import fetchMovieList from "./functions/fetchMovieList"
 import MoviePage from '../src/components/MoviePage'
 import combine from "./functions/combine"
 import CastPage from "./components/CastPage"
+import Player from "./components/Player"
 
 function App() {
   let [genres, setGenres] = useState([])
   const [combined_list, setCombined_list] = useState([])
   const [routes, setRoutes] = useState([])
+  const [globalTrailer,setGlobalTrailer] = useState([])
 
   useEffect(() => {
     fetchGenres(setGenres)
     if (genres.length) {
-      console.log('fetching started');
-      console.log(genres);
       fetchMovieList(genres, setGenres, setCombined_list)
     }
   }, [genres.length])
 
   function movieListChecker(arr) {
-    console.log('called movieList');
     let bool = false
     for (let i = 0; i < arr.length; i++) {
-      console.log(i);
       if (!arr[i].movieList) {
         return false
       } else {
@@ -39,7 +37,6 @@ function App() {
   useEffect(() => {
     if (genres.length) {
       if (movieListChecker(genres)) {
-        console.log('checked all set');
         setCombined_list([...combine(genres)])
       }
     }
@@ -49,14 +46,14 @@ function App() {
     setRoutes([...combined_list])
   }, [combined_list])
   return (
-    <MovieContext.Provider value={{ genres, combined_list,setRoutes,setCombined_list }}>
+    <MovieContext.Provider value={{ genres, combined_list,setRoutes,setCombined_list,setGlobalTrailer }}>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/player" element={<Player Item={globalTrailer} />} />
         {
           routes.map((item, index) => {
-            console.log('item routed')
             return (
-              <Route key={index} path={item.card_type ? `/${item.id}/${item.original_name}` : `/${item.id}/${item.original_title}`} element={item.card_type ? <CastPage Cast={item} /> : <MoviePage movieItem={item} row={combined_list} />} />
+              <Route key={index} path={item.card_type ? `/${item.id}/${item.original_name}` : `/${item.id}/${item.original_title}`} element={item.card_type ? <CastPage key={index} Cast={item} /> : <MoviePage key={index} movieItem={item} row={combined_list} />} />
             )
           }
           )

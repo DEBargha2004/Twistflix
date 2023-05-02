@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
-import Card from './Card';
+import Moviecard from './Moviecard';
 import Castcard from './Castcard'
+import Videocard from './Videocard';
 
 function Row({ title, type, List: list, scrollReset, setScrollReset }) {
-    console.log('type is',title);
     const row = useRef(null)
     function Backward() {
         row.current.scrollLeft += -400
@@ -11,12 +11,19 @@ function Row({ title, type, List: list, scrollReset, setScrollReset }) {
     function Forward() {
         row.current.scrollLeft += 400
     }
+    function ItemCard({type,Item}){
+        if(type === 'movie'){
+            return <Moviecard Item={Item} />
+        }else if(type === 'cast') {
+            return <Castcard Item={Item} />
+        } else if(type === 'related'){
+            return <Videocard Item={Item} />
+        }
+    }
     useEffect(() => {
         if (scrollReset) {
             row.current.scrollLeft = 0
-            console.log(row.current.scrollLeft);
             setScrollReset(false)
-            console.log('scrollReset set to false');
         }
     }, [scrollReset])
 
@@ -29,9 +36,7 @@ function Row({ title, type, List: list, scrollReset, setScrollReset }) {
                 {
                     list.map((Item, index) => {
                         return (
-                            type === 'movie' ?
-                                <Card Item={Item} key={index} index={index} /> :
-                                <Castcard Item={Item} key={index} />
+                            <ItemCard type={type} Item={Item} key={index} />
                         )
                     })
                 }
