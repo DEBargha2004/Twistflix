@@ -10,6 +10,7 @@ function MoviePage({ movieItem, row }) {
   const { genre_ids } = movieItem
   const [currentRow, setCurrentRow] = useState([])
   const [genreType, setGenreType] = useState([])
+  const [scrollReset, setScrollReset] = useState(false)
   const { genres } = useContext(MovieContext)
 
 
@@ -28,6 +29,8 @@ function MoviePage({ movieItem, row }) {
       }
     });
     setCurrentRow(removeDup(movieContainer, movieItem))
+    console.log('scrollReset set to true');
+    setScrollReset(true)
   }, [movieItem])
   useEffect(() => {
     setGenreType([])
@@ -63,7 +66,7 @@ function MoviePage({ movieItem, row }) {
         </div>
       </div>
       <div>
-        <Row  movieList={currentRow} type='Similar Movies' />
+        <Row scrollReset={scrollReset} setScrollReset={setScrollReset} movieList={currentRow} type='Similar Movies' />
       </div>
     </div>
   )

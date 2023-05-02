@@ -1,7 +1,7 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Card from './Card'
 
-function Row({ type, movieList }) {
+function Row({ type, movieList,scrollReset,setScrollReset }) {
     const row = useRef(null)
     function Backward() {
         row.current.scrollLeft += -400
@@ -9,6 +9,14 @@ function Row({ type, movieList }) {
     function Forward() {
         row.current.scrollLeft += 400
     }
+    useEffect(()=>{
+        if(scrollReset){
+            row.current.scrollLeft = 0
+            console.log(row.current.scrollLeft);
+            setScrollReset(false)
+            console.log('scrollReset set to false');
+        }
+    },[scrollReset])
 
     return (
         <div className="mx-4 relative">
