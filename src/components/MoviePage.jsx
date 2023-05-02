@@ -5,11 +5,13 @@ import { useState, useEffect, useContext } from 'react';
 import MovieContext from '../hooks/context';
 import genre from '../functions/genre';
 import removeDup from '../functions/removeDup'
+import { apikey } from '../assets/url';
 
 function MoviePage({ movieItem, row }) {
   const { genre_ids } = movieItem
   const [currentRow, setCurrentRow] = useState([])
   const [genreType, setGenreType] = useState([])
+  const [cast, setCast] = useState([])
   const [scrollReset, setScrollReset] = useState(false)
   const { genres } = useContext(MovieContext)
 
@@ -17,19 +19,27 @@ function MoviePage({ movieItem, row }) {
   function ifIncludes(ids, compare) {
     const { genre_ids: comapre_ids } = compare
     for (let i = 0; i < ids.length; i++) {
-      if (comapre_ids.includes(ids[0])) return true
+      if (comapre_ids.includes(ids[i])) return true
     }
   }
 
+  async function callCast() {
+    let response = await fetch(`https://api.themoviedb.org/3/movie/${movieItem.id}/credits?api_key=${apikey}`)
+    response = await response.json()
+    setCast(response.cast)
+  }
+
   useEffect(() => {
+    callCast()
     let movieContainer = []
     row.forEach(element => {
-      if (ifIncludes(genre_ids, element)) {
-        movieContainer.push(element)
+      if (!element.card_type) {
+        if (ifIncludes(genre_ids, element)) {
+          movieContainer.push(element)
+        }
       }
     });
     setCurrentRow(removeDup(movieContainer, movieItem))
-    console.log('scrollReset set to true');
     setScrollReset(true)
   }, [movieItem])
   useEffect(() => {
@@ -37,7 +47,7 @@ function MoviePage({ movieItem, row }) {
     genre(genre_ids, setGenreType, genres)
   }, [])
   return (
-    <div>
+    <>
       <div className='flex justify-around m-10'>
         <div className='flex-1 flex justify-center'>
           <div className='w-[400px] overflow-hidden rounded-lg'>
@@ -66,9 +76,10 @@ function MoviePage({ movieItem, row }) {
         </div>
       </div>
       <div>
-        <Row scrollReset={scrollReset} setScrollReset={setScrollReset} movieList={currentRow} type='Similar Movies' />
+        <Row scrollReset={scrollReset} type='cast' setScrollReset={setScrollReset} List={cast} title='Cast' />
+        <Row scrollReset={scrollReset} type='movie' setScrollReset={setScrollReset} List={currentRow} title='Similar Movies'></Row>
       </div>
-    </div>
+    </>
   )
 }
 

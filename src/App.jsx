@@ -6,10 +6,12 @@ import fetchGenres from "./functions/fetchGenres"
 import fetchMovieList from "./functions/fetchMovieList"
 import MoviePage from '../src/components/MoviePage'
 import combine from "./functions/combine"
+import CastPage from "./components/CastPage"
 
 function App() {
   let [genres, setGenres] = useState([])
   const [combined_list, setCombined_list] = useState([])
+  const [routes, setRoutes] = useState([])
 
   useEffect(() => {
     fetchGenres(setGenres)
@@ -31,7 +33,6 @@ function App() {
         bool = true
       }
     }
-    console.log('bool', bool);
     return bool
   }
 
@@ -44,19 +45,18 @@ function App() {
     }
   }, [genres])
 
-  if (combined_list.length) {
-    console.log('item added');
-  }
-
+  useEffect(() => {
+    setRoutes([...combined_list])
+  }, [combined_list])
   return (
-    <MovieContext.Provider value={{ genres, combined_list }}>
+    <MovieContext.Provider value={{ genres, combined_list,setRoutes,setCombined_list }}>
       <Routes>
         <Route path="/" element={<Home />} />
         {
-          combined_list.map((item, index) => {
+          routes.map((item, index) => {
             console.log('item routed')
             return (
-              <Route key={index} path={`/${item.id}/${item.original_title}`} element={<MoviePage movieItem={item} row={combined_list} />} />
+              <Route key={index} path={item.card_type ? `/${item.id}/${item.original_name}` : `/${item.id}/${item.original_title}`} element={item.card_type ? <CastPage Cast={item} /> : <MoviePage movieItem={item} row={combined_list} />} />
             )
           }
           )

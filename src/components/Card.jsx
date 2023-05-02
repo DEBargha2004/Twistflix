@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import genre from '../functions/genre'
 import { motion } from 'framer-motion'
 
-function Card({ index, movieItem }) {
+function Card({ index, Item:movieItem }) {
     const { genres } = useContext(MovieContext)
     const [isHovering, setIsHovering] = useState(false)
     const movieCard = useRef(null)
