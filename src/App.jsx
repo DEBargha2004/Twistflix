@@ -44,7 +44,11 @@ function App() {
 
   useEffect(() => {
     setRoutes([...combined_list])
+    localStorage.setItem('saved_movies',JSON.stringify(combined_list))
   }, [combined_list])
+  useEffect(()=>{
+    setCombined_list(JSON.parse(localStorage.getItem('saved_movies')))
+  },[])
   return (
     <MovieContext.Provider value={{ genres, combined_list,setRoutes,setCombined_list,setGlobalTrailer }}>
       <Routes>

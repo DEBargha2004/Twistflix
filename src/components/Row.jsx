@@ -3,7 +3,7 @@ import Moviecard from './Moviecard';
 import Castcard from './Castcard'
 import Videocard from './Videocard';
 
-function Row({ title, type, List: list, scrollReset, setScrollReset }) {
+function Row({ title, type, List: list, scrollReset, setScrollReset,inside }) {
     const row = useRef(null)
     function Backward() {
         row.current.scrollLeft += -400
@@ -22,13 +22,18 @@ function Row({ title, type, List: list, scrollReset, setScrollReset }) {
     }
     useEffect(() => {
         if (scrollReset) {
-            row.current.scrollLeft = 0
-            setScrollReset(false)
+            setTimeout(()=>{
+                row.current.scrollTo({
+                    behavior : 'smooth',
+                    left : 0
+                })
+                setScrollReset(false)
+            },1000)
         }
     }, [scrollReset])
 
     return (
-        <div className="mx-4 relative">
+        <div className={`mx-4 relative ${inside && 'mb-[80px]'}`}>
             <p className="text-white font-semibold text-xl uppercase">{title}</p>
             <div className={`flex w-full overflow-x-scroll py-1 ml-2 my-3 scroll-smooth`}
                 ref={row}

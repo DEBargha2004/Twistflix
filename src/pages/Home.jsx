@@ -41,7 +41,7 @@ function Home() {
             <div className='relative w-full overflow-hidden'>
                 <img src={current ? urls.baseUrl + current.backdrop_path : null} className='object-cover w-full hover:scale-[1.03] transition-all duration-[600ms] opacity-60 bg-[#00000060] hover:opacity-50' style={{ height: `${window.innerHeight * 0.8}px` }} alt="" />
                 <div className='absolute left-[50px] top-[50%]'>
-                    <p className='font-semibold text-white text-[50px]'>{current?.original_title}</p>
+                    <p className='font-semibold text-white text-[50px] line-clamp-1'>{current?.original_title}</p>
                     <p className='text-white text-sm line-clamp-5 w-[400px]'>{current?.overview}</p>
                     {
                         current ?
