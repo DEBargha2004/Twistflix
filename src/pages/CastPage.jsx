@@ -1,27 +1,33 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { apikey } from '../assets/url'
+import { apiKey } from '../assets/apiKey'
 import urls from '../assets/url'
 import MovieContext from '../hooks/context'
-import Row from './Row'
+import Row from '../components/Row'
 
 function CastPage({ Cast }) {
     const { setCombined_list } = useContext(MovieContext)
     const [scrollReset, setScrollReset] = useState(false)
     const [currentCast, setCurrentCast] = useState({})
-    const [currentCastMovies,setCurrentCastMovies] = useState([])
+    const [currentCastMovies, setCurrentCastMovies] = useState([])
     const [seeFull, setseeFull] = useState(false)
     async function callSpecificCast() {
-        let response = await fetch(`https://api.themoviedb.org/3/person/${Cast.id}?api_key=${apikey}`)
+        let response = await fetch(`https://api.themoviedb.org/3/person/${Cast.id}?api_key=${apiKey}`)
         response = await response.json()
         setCurrentCast(response)
-        response = await fetch(`https://api.themoviedb.org/3/person/${Cast.id}/movie_credits?api_key=${apikey}&language=en-US`)
+        response = await fetch(`https://api.themoviedb.org/3/person/${Cast.id}/movie_credits?api_key=${apiKey}&language=en-US`)
         response = await response.json()
-        setCombined_list(prev => [...prev, ...response.cast],...response.crew)
-        setCurrentCastMovies([...response.cast,...response.crew])
+        setCombined_list(prev => [...prev, ...response.cast], ...response.crew)
+        setCurrentCastMovies([...response.cast, ...response.crew])
     }
     useEffect(() => {
         callSpecificCast()
         setScrollReset(true)
+        setTimeout(() => {
+            document.querySelector('html').scrollTo({
+                behavior: 'smooth',
+                top: 0
+            })
+        }, 500)
     }, [Cast])
     return (
         <>
@@ -39,7 +45,7 @@ function CastPage({ Cast }) {
                     </p>
                     <p className={`text-white w-[80%] ${seeFull ? '' : 'line-clamp-[13]'}`} onClick={() => setseeFull(prev => !prev)}>
                         {
-                            currentCast.biography? currentCast.biography : 'There is no biography'
+                            currentCast.biography ? currentCast.biography : 'There is no biography'
                         }
                     </p>
                     <div className='my-10'>
@@ -56,7 +62,7 @@ function CastPage({ Cast }) {
                 </div>
             </div>
             <div>
-                <Row type='movie' title='Related Movies' List={currentCastMovies} setScrollReset={setScrollReset} scrollReset={scrollReset} />
+                <Row type='movie' title='Related Movies' inside List={currentCastMovies} setScrollReset={setScrollReset} scrollReset={scrollReset} />
             </div>
         </>
     )

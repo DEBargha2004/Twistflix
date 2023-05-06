@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import Moviecard from './Moviecard';
-import Castcard from './Castcard'
-import Videocard from './Videocard';
+import { ItemCard } from './ItemCard'
 
 function Row({ title, type, List: list, scrollReset, setScrollReset,inside }) {
     const row = useRef(null)
@@ -10,15 +8,6 @@ function Row({ title, type, List: list, scrollReset, setScrollReset,inside }) {
     }
     function Forward() {
         row.current.scrollLeft += 400
-    }
-    function ItemCard({type,Item}){
-        if(type === 'movie'){
-            return <Moviecard Item={Item} />
-        }else if(type === 'cast') {
-            return <Castcard Item={Item} />
-        } else if(type === 'related'){
-            return <Videocard Item={Item} />
-        }
     }
     useEffect(() => {
         if (scrollReset) {
@@ -41,7 +30,7 @@ function Row({ title, type, List: list, scrollReset, setScrollReset,inside }) {
                 {
                     list.map((Item, index) => {
                         return (
-                            <ItemCard type={type} Item={Item} key={index} />
+                            <ItemCard type={type} Item={Item} index={index} key={index} />
                         )
                     })
                 }
