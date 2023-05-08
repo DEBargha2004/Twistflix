@@ -15,7 +15,7 @@ function Home() {
                         <div key={index} className='my-8'>
                             {
                                 item.movieList ?
-                                    <Row title={item.name} type='movie' List={item.movieList} /> :
+                                    <Row title={item.name} type='movie' List={item.movieList} id={item.id} /> :
                                     null
                             }
                         </div>

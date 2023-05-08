@@ -22,9 +22,6 @@ function Card({ Item:movieItem }) {
     const navigate = useNavigate()
 
 
-
-
-
     function handleNavigate() {
         const movieRoute = `/${movieItem.id}/${movieItem.original_title}`
         navigate(movieRoute)
@@ -131,8 +128,8 @@ function Card({ Item:movieItem }) {
                                 </p>
                                 <p className='mt-2 font-semibold'>
                                     {
-                                        genre_type.map(item => (
-                                            <span className='text-white text-[14px]'> {item} </span>
+                                        genre_type.map((item,index) => (
+                                            <span className='text-white text-[14px]' key={index}> {item} </span>
                                         ))
                                     }
                                 </p>

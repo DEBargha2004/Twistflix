@@ -31,7 +31,7 @@ function CastPage({ Cast }) {
     }, [Cast])
     return (
         <>
-            <div className='flex justify-around m-10'>
+            <div className='flex justify-around m-10 mt-[100px]'>
                 <div className='flex-1 flex justify-center'>
                     <div className='w-[400px] h-fit overflow-hidden rounded-lg'>
                         <img src={`${urls.baseUrl}${Cast.profile_path}`} className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70 hover:bg-[#00000070]' alt="" />

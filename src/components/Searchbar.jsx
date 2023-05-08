@@ -1,45 +1,155 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { motion } from 'framer-motion';
-import urls from '../assets/url';
+import React, { useEffect, useState, useRef, useContext } from 'react'
+import MovieContext from '../hooks/context'
+import { motion } from 'framer-motion'
+import { apiKey } from '../assets/apiKey'
+import urls from '../assets/url'
+import { addIf_DoesNot_Exist } from '../functions/addIf_DoesNot_Exist'
+import { useNavigate } from 'react-router-dom'
 
-function Searchbar() {
-    const delay = 400
-    const [isClicked, setIsClicked] = useState(false)
-    const [kinematics, setKinematics] = useState({
-        rotate: false,
+function Searchbar () {
+  const delay = 400
+  const navigate = useNavigate()
+  const { setCombined_list, combined_list } = useContext(MovieContext)
+  const [isClicked, setIsClicked] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+  const [query, setQuery] = useState(null)
+  const [searchList, setSearchList] = useState([])
+  const [kinematics, setKinematics] = useState({
+    rotate: false
+  })
+  const inputRef = useRef(null)
+  const searchRef = useRef(null)
+  const searchListRef = useRef(null)
+  const imageRef = useRef(null)
+  function handleClick () {
+    setIsClicked(prev => {
+      inputRef.current.focus()
+      return true
     })
-    const inputRef = useRef(null)
-    function handleClick() {
-        setIsClicked(prev => {
-            inputRef.current.focus()
-            return true
-        })
-
+    setIsFocused(true)
+  }
+  function handleBlur () {
+    if (!query) {
+      setIsClicked(false)
     }
-    function handleBlur() {
-        setIsClicked(false)
-    }
-    useEffect(() => {
-        if (isClicked) {
-            setTimeout(() => {
-                setKinematics(prev => ({
-                    ...prev, rotate: true
-                }))
-            }, delay)
-        } else {
-            setTimeout(() => {
-                setKinematics(prev => ({
-                    ...prev, rotate: false
-                }))
-            }, delay)
-        }
-    }, [isClicked])
-    return (
-        <div onClick={() => handleClick()} onBlur={() => handleBlur()} className='relative'>
-            <motion.input ref={inputRef} layout type="text" style={{ borderRadius: 40 }} className={`${isClicked ? 'w-[250px]' : 'w-[60px] cursor-pointer'} text-lg px-4 py-6 h-[30px] outline-none bg-black border-[2px] border-[#ffffff9c] text-[#ffffff8a]`} autoCorrect='off' />
-            <motion.img layout src={urls.searchIcon} animate={{ rotate: kinematics.rotate ? 0 : 80, right: 16 }} transition={{ duration: 0.4 }} className='w-7 absolute top-2 cursor-pointer' alt="" />
-        </div>
+    // setIsFocused(false)
+  }
+  async function callQuery () {
+    let response = await fetch(
+      `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${query}*&page=1`
     )
+    response = await response.json()
+    setSearchList(response.results)
+  }
+  function setMovieRoute (item) {
+    addIf_DoesNot_Exist([item], combined_list, setCombined_list)
+    navigate(`/${item.id}/${item.original_title}`)
+    setIsFocused(false)
+  }
+  useEffect(() => {
+    if (isClicked) {
+      setTimeout(() => {
+        setKinematics(prev => ({
+          ...prev,
+          rotate: true
+        }))
+      }, delay)
+    } else {
+      setTimeout(() => {
+        setKinematics(prev => ({
+          ...prev,
+          rotate: false
+        }))
+      }, delay)
+    }
+  }, [isClicked])
+  useEffect(() => {
+    if (query) {
+      callQuery()
+    } else {
+      setSearchList([])
+    }
+  }, [query])
+  useEffect(() => {
+    window.addEventListener('click', e => {
+      let bool = !(
+        e.target === searchRef.current ||
+        e.target === searchListRef.current ||
+        e.target === imageRef.current ||
+        e.target === inputRef.current
+      )
+      if (bool) {
+        setIsFocused(false)
+      }
+    })
+    return () =>
+      window.removeEventListener('click', e => {
+        if (bool) {
+          console.log('not focused')
+          setIsFocused(false)
+        }
+      })
+  }, [])
+  return (
+    <div className='relative flex flex-col items-center'>
+      <div
+        className='relative'
+        onClick={() => handleClick()}
+        onBlur={() => handleBlur()}
+        ref={searchRef}
+      >
+        <motion.input
+          ref={inputRef}
+          layout
+          type='text'
+          style={{
+            borderRadius: 40,
+            borderWidth: 2,
+            borderColor: '#ffffff9c'
+          }}
+          className={`${
+            isClicked ? 'w-[250px]' : 'w-[60px] cursor-pointer'
+          } text-lg px-4 py-6 h-[30px] outline-none bg-black text-[#ffffff8a]`}
+          spellCheck='false'
+          onChange={e => setQuery(e.target.value.trim())}
+        />
+        <motion.img
+          layout
+          src={urls.searchIcon}
+          ref={imageRef}
+          animate={{ rotate: kinematics.rotate ? 0 : 80, right: 16 }}
+          transition={{ duration: 0.4 }}
+          className='w-7 absolute top-2 cursor-pointer'
+          alt=''
+        />
+      </div>
+      {isFocused ? (
+        <div
+          ref={searchListRef}
+          className={`absolute top-[52px] mt-2 w-[300px] bg-black max-h-[300px] overflow-y-scroll rounded-lg ${
+            searchList.length && 'border-[2px]'
+          } border-[#ffffff59] shadow-2xl shadow-[#6968683d]`}
+        >
+          {searchList.map((item, index) => (
+            <div
+              key={index}
+              className='border-b-[1px] border-[#ffffffa9] px-2 py-3 flex items-center cursor-pointer hover:bg-[#131313] transition-all duration-20000 ease-out'
+              onClick={() => setMovieRoute(item)}
+            >
+              <img
+                src={`${urls.baseUrl}${item.backdrop_path}`}
+                className='w-8 mr-3 rounded-sm'
+                alt=''
+              />
+              <p className='text-white text-lg truncate '>
+                {item.original_title}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  )
 }
 
-export default Searchbar;
+export default Searchbar

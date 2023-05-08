@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import MovieContext from '../hooks/context';
 import { useNavigate } from 'react-router-dom';
 import urls from '../assets/url';
@@ -7,11 +7,11 @@ import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
 
 function Hero() {
     const navigate = useNavigate()
-    const { hero, trailer, setGlobalTrailer } = useContext(MovieContext)
-    const [Index, setIndex] = useState(0)
+    const { hero, trailer, setGlobalTrailer,Index,setIndex } = useContext(MovieContext)
 
     function changeBy(val) {
         let newIndex = Index + val
+        console.log(newIndex);
         if (newIndex < 0) {
             setIndex(hero.length - 1)
         } else if (newIndex > hero.length - 1) {
@@ -38,13 +38,13 @@ function Hero() {
                 </div>
             </div>
             <div className='relative h-8 py-2'>
-                <span className='text-white mx-3 font-semibold uppercase hover:bg-slate-700 transition-all duration-500 ease-out active:scale-90 bg-slate-500 px-5 py-2 absolute left-4 cursor-pointer rounded-[25px]' onClick={() => changeBy(-1)}>Prev</span>
-                <span className='text-white mx-3 font-semibold uppercase hover:bg-slate-700 transition-all duration-500 ease-out active:scale-90 bg-slate-500 px-5 py-2 absolute right-4 cursor-pointer rounded-[25px]' onClick={() => changeBy(1)}>Next</span>
+                <span className='text-white mx-3 my-2 font-semibold uppercase hover:bg-slate-700 transition-all duration-500 ease-out active:scale-90 bg-slate-500 px-5 py-2 absolute left-4 cursor-pointer rounded-[25px]' onClick={() => changeBy(-1)}>Prev</span>
+                <span className='text-white mx-3 my-2 font-semibold uppercase hover:bg-slate-700 transition-all duration-500 ease-out active:scale-90 bg-slate-500 px-5 py-2 absolute right-4 cursor-pointer rounded-[25px]' onClick={() => changeBy(1)}>Next</span>
             </div>
             <div className='w-full flex justify-center'>
                 {
                     hero.map((item, index) => (
-                        <div className={`h-2 w-2 rounded-full ${index === Index ? 'bg-white' : 'bg-slate-500'} mx-[6px] cursor-pointer`} onClick={() => setIndex(index)} key={index} />
+                        <div className={`h-2 w-2 rounded-full ${index === Index ? 'bg-white scale-150' : 'bg-slate-500 scale-75'} mx-[6px] cursor-pointer hover:scale-150 transition-all duration-300 ease-out`} onClick={() => setIndex(index)} key={index} />
                     ))
                 }
             </div>

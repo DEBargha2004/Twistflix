@@ -2,72 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
-html{
+html {
   scrollbar-width: none;
 }
-div{
+div {
   scrollbar-width: none;
 }
-body{
-    background-color: rgb(0, 0, 0);
+body {
+  background-color: rgb(0, 0, 0);
 }
 
-::-webkit-scrollbar{
-    display: none;
+::-webkit-scrollbar {
+  display: none;
 }
 
-
-.row{
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns:20% ;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
+.row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 20%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
 }
 
-.card{
-    overflow: visible;
+.card {
+  overflow: visible;
 }
 .single-chart {
-    width: 33%;
-    justify-content: space-around ;
-  }
-  
-  .circular-chart {
-    display: block;
-    margin: 10px auto;
-    max-width: 80%;
-    max-height: 250px;
-  }
-  
-  .circle-bg {
-    fill: none;
-    stroke: #eee;
-    stroke-width: 3.8;
-  }
-  
-  .circle {
-    fill: none;
-    stroke-width: 2.8;
-    stroke-linecap: round;
-    animation: progress 1s ease-out forwards;
-  }
-  
-  .circular-chart.orange .circle {
-    stroke: #00c400;
-  }
-  
-  .circular-chart.green .circle {
-    stroke: #4CC790;
-  }
-  
-  .circular-chart.blue .circle {
-    stroke: #3c9ee5;
-  }
-  
-  .percentage {
-    fill: #ffffff;
-    font-family: sans-serif;
-    font-size: 0.5em;
-    text-anchor: middle;
-  }
+  width: 33%;
+  justify-content: space-around;
+}
+
+.circular-chart {
+  display: block;
+  margin: 10px auto;
+  max-width: 80%;
+  max-height: 250px;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3.8;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+.circular-chart.orange .circle {
+  stroke: #00c400;
+}
+
+.circular-chart.green .circle {
+  stroke: #4cc790;
+}
+
+.circular-chart.blue .circle {
+  stroke: #3c9ee5;
+}
+
+.percentage {
+  fill: #ffffff;
+  font-family: sans-serif;
+  font-size: 0.5em;
+  text-anchor: middle;
+}
+
