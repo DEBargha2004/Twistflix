@@ -23,7 +23,7 @@ function Castcard({ Item }) {
         </p>
         <p className='text-white text-[14px] font-light line-clamp-1'>
           {
-            Item?.character
+            Item?.character || Item?.job
           }
         </p>
       </div>

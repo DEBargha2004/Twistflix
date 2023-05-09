@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { ItemCard } from './ItemCard'
 import CallNew_Card from './CallNew_Card'
 
@@ -9,7 +9,8 @@ function Row ({
   scrollReset,
   setScrollReset,
   include_margin,
-  id
+  id,
+  content_type
 }) {
   const row = useRef(null)
   function Backward () {
@@ -37,9 +38,13 @@ function Row ({
         className={`flex w-full overflow-x-scroll py-1 ml-2 my-3 scroll-smooth`}
         ref={row}
       >
-        {list.map((Item, index) => {
-          return <ItemCard type={type} Item={Item} index={index} key={index} />
-        })}
+        {list
+          ? list.map((Item, index) => {
+              return (
+                <ItemCard type={type} Item={Item} index={index} key={index} content_type={content_type} />
+              )
+            })
+          : null}
         {id && <CallNew_Card id={id} />}
       </div>
       <div

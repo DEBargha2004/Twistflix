@@ -16,7 +16,7 @@ export async function callCast_Videos ({
     `https://api.themoviedb.org/3/movie/${movieItem.id}/credits?api_key=${apiKey}`
   )
   response = await response.json()
-  setCast(response.cast)
+  setCast([...response.cast,...response.crew])
   response = await fetch(
     `https://api.themoviedb.org/3/movie/${movieItem.id}/videos?api_key=${apiKey}&language=en-US`
   )
@@ -24,7 +24,7 @@ export async function callCast_Videos ({
   setRelatedVideos(response.results)
   setLocalTrailer(response.results.find(item => item.type === 'Trailer'))
   response = await fetch(
-    `https://api.themoviedb.org/3/movie/${movieItem.id}?api_key=cbcd1ac0703914747341f9a905931ef9&language=en-US`
+    `https://api.themoviedb.org/3/movie/${movieItem.id}?api_key=${apiKey}&language=en-US`
   )
   response = await response.json()
   let collection_id = response.belongs_to_collection.id

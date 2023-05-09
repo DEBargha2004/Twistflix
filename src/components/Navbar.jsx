@@ -18,7 +18,7 @@ function Navbar() {
     <div className={`text-white h-[70px] px-10 flex justify-between items-center fixed top-0 w-full z-10 ${opacity === 1 && 'shadow-lg shadow-[#41414121]'}`}>
       <img src={urls.appLogo} alt="App-logo" className='h-8' />
       <Searchbar />
-      {/* <Additional /> */}
+      <Additional />
       <div className={`absolute top-0 left-0 w-full h-[70px] bg-black z-[-10]`} style={{ opacity }} />
     </div>
   )

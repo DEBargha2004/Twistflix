@@ -1,6 +1,5 @@
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import urls from '../assets/url'
-import { apiKey } from '../assets/apiKey'
 import Row from '../components/Row'
 import { useState, useEffect, useContext } from 'react'
 import MovieContext from '../hooks/context'
@@ -118,17 +117,17 @@ function MoviePage ({ movieItem, row }) {
         </div>
       </div>
       <div>
-        <Row type='cast' List={cast} title='Cast' include_margin {...scrollReset} />
+        <Row type='long_vertical' List={cast} title='Cast' include_margin {...scrollReset} />
         <Row
-          type='movie'
+          type='long_horizontal'
           List={movies_In_Series}
           title='Movies in series'
           include_margin
           {...scroller}
         />
-        {/* <Row type='related' List={relatedVideos} title='Related Videos' include_margin  {...scroller} /> */}
+        {/* <Row type='scaled_both' List={relatedVideos} title='Related Videos' include_margin  {...scroller} /> */}
         <Row
-          type='movie'
+          type='long_horizontal'
           List={similarMovies}
           title='Similar Movies'
           include_margin
