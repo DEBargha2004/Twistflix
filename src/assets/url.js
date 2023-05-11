@@ -12,14 +12,18 @@ const urls = {
   },
   baseUrl: 'https://image.tmdb.org/t/p/original',
   youtubeBaseUrl: `https://www.youtube.com/watch?v=`,
-  appLogo: 'https://www.edigitalagency.com.au/wp-content/uploads/netflix-logo-png-large.png',
+  appLogo:
+    'https://www.edigitalagency.com.au/wp-content/uploads/netflix-logo-png-large.png',
   searchIcon: 'https://cdn-icons-png.flaticon.com/512/954/954591.png',
-  videosUrl: (type = 'movie',id) => {
-    if(type === 'movie'){
+  videosUrl: (type = 'movie', id) => {
+    if (type === 'movie') {
       return `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${apiKey}&language=en-US`
-    }else if(type === 'series'){
+    } else if (type === 'series') {
       return `https://api.themoviedb.org/3/tv/${id}/videos?api_key=${apiKey}&language=en-US`
     }
+  },
+  queryUrl: (type, query) => {
+    return `https://api.themoviedb.org/3/search/${type}?api_key=${apiKey}&query=${query}*&page=1`
   }
 }
 

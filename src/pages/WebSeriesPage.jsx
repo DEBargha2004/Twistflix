@@ -10,11 +10,18 @@ import { ifIncludes } from '../functions/ifIncludes'
 import { apiKey } from '../assets/apiKey'
 import Row from '../components/Row'
 import _ from 'lodash'
-
+import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
 
 function WebSeriesPage ({ movieItem, row }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const {
+    seriesGenres,
+    setGlobalTrailer,
+    seriesCombined_list,
+    setSeriesCombined_list,
+    setInView
+  } = useContext(MovieContext)
   const { genre_ids } = movieItem
   const [similarMovies, setSimilarMovies] = useState([])
   const [genreType, setGenreType] = useState([])
@@ -24,14 +31,7 @@ function WebSeriesPage ({ movieItem, row }) {
   const [scrollReset, setScrollReset] = useState(false)
   const [seriesInfo, setSeriesInfo] = useState({})
   const [selectedSeason, setSelectedSeason] = useState({ brief: {} })
-  const {
-    seriesGenres,
-    setGlobalTrailer,
-    seriesCombined_list,
-    setSeriesCombined_list,
-    setInView
-  } = useContext(MovieContext)
-  const [localTrailer, setLocalTrailer] = useState([])
+  const [localTrailer, setLocalTrailer] = useState(null)
   const [percentage] = useState(Math.floor(movieItem.vote_average * 10))
   const scroller = { scrollReset, setScrollReset }
   async function callSeriesCast_Videos () {
@@ -46,9 +46,9 @@ function WebSeriesPage ({ movieItem, row }) {
     response = await response.json()
     setSeriesInfo(response)
     setSeriesCombined_list(prev => {
-      let seriesIndex = _.findIndex(prev,{id:response.id})
-      prev[seriesIndex] = {...prev[seriesIndex],seasons:response.seasons}
-      console.log(seriesIndex,prev);
+      let seriesIndex = _.findIndex(prev, { id: response.id })
+      prev[seriesIndex] = { ...prev[seriesIndex], seasons: response.seasons }
+      console.log(prev[seriesIndex],seriesIndex);
       return [...prev]
     })
     response = await fetch(
@@ -56,6 +56,8 @@ function WebSeriesPage ({ movieItem, row }) {
     )
     response = await response.json()
     setRelatedVideos(response.results)
+    response = response.results.find(item => item.type === 'Trailer')
+    setLocalTrailer(response)
   }
 
   useEffect(() => {
@@ -83,7 +85,7 @@ function WebSeriesPage ({ movieItem, row }) {
   useEffect(() => {
     setGenreType([])
     genre(genre_ids, setGenreType, seriesGenres)
-    location.pathname.includes('/webseries') && setInView(1)
+    location.pathname.includes('/tv') && setInView(1)
   }, [])
   useEffect(() => {
     if (selectedSeason.brief.id) {
@@ -93,80 +95,80 @@ function WebSeriesPage ({ movieItem, row }) {
   return (
     <>
       <seasonContext.Provider value={{ selectedSeason, setSelectedSeason }}>
-      <div className='flex justify-around m-10 mt-[100px]'>
-        <div className='flex-1 flex justify-center'>
-          <div className='w-[400px] overflow-hidden rounded-lg'>
-            <img
-              src={`${urls.baseUrl}${movieItem.poster_path}`}
-              className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70 hover:bg-[#00000070]'
-              alt=''
-            />
+        <div className='flex justify-around m-10 mt-[100px]'>
+          <div className='flex-1 flex justify-center'>
+            <div className='w-[400px] overflow-hidden rounded-lg'>
+              <img
+                src={`${urls.baseUrl}${movieItem.poster_path}`}
+                className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70 hover:bg-[#00000070]'
+                alt=''
+              />
+            </div>
+          </div>
+          <div className='flex-1'>
+            <p className='text-white text-[50px] font-bold mb-10'>
+              {movieItem.original_name}
+            </p>
+            <p className='text-white w-[80%]'>{movieItem.overview}</p>
+            <p className='mt-10'>
+              {genreType.map((item, index) => (
+                <span
+                  key={index}
+                  className='text-white mr-2 text-lg font-semibold'
+                >
+                  {item}
+                </span>
+              ))}
+            </p>
+            <p className='mt-5 text-white text-lg'>
+              {`Release Date - `}
+              <span className='font-semibold'>
+                {movieItem.release_date || movieItem.first_air_date}
+              </span>
+            </p>
+            <Percent_svg percentage={percentage} />
+            <button
+              className='bg-white mr-2 mt-12 text-lg uppercase px-5 py-2 font-semibold rounded-md transition-all hover:bg-[#ffffffaf]'
+              onClick={() =>
+                handleGlobalPlayer({ setGlobalTrailer, navigate, localTrailer })
+              }
+            >
+              Play
+            </button>
           </div>
         </div>
-        <div className='flex-1'>
-          <p className='text-white text-[50px] font-bold mb-10'>
-            {movieItem.original_name}
-          </p>
-          <p className='text-white w-[80%]'>{movieItem.overview}</p>
-          <p className='mt-10'>
-            {genreType.map((item, index) => (
-              <span
-                key={index}
-                className='text-white mr-2 text-lg font-semibold'
-              >
-                {item}
-              </span>
-            ))}
-          </p>
-          <p className='mt-5 text-white text-lg'>
-            {`Release Date - `}
-            <span className='font-semibold'>
-              {movieItem.release_date || movieItem.first_air_date}
-            </span>
-          </p>
-          <Percent_svg percentage={percentage} />
-          <button
-            className='bg-white mr-2 mt-12 text-lg uppercase px-5 py-2 font-semibold rounded-md transition-all hover:bg-[#ffffffaf]'
-            onClick={() =>
-              handleGlobalPlayer({ setGlobalTrailer, navigate, localTrailer })
-            }
-          >
-            Play
-          </button>
+        <div>
+          <Row
+            type='season'
+            title='Seasons'
+            List={seriesInfo.seasons}
+            series_info={seriesInfo}
+            include_margin
+            {...scroller}
+          />
+          <Row
+            type='long_vertical'
+            List={cast}
+            title='Cast'
+            include_margin
+            {...scroller}
+          />
+          <Row
+            type='scaled_both'
+            List={relatedVideos}
+            title='Related Videos'
+            include_margin
+            {...scroller}
+          />
+          <Row
+            type='long_horizontal'
+            content_type='series'
+            List={similarMovies}
+            title='Similar Web Series'
+            include_margin
+            {...scroller}
+          />
         </div>
-      </div>
-      <div>
-        <Row
-          type='long_vertical'
-          List={cast}
-          title='Cast'
-          include_margin
-          {...scroller}
-        />
-        <Row
-          type='season'
-          title='Seasons'
-          List={seriesInfo.seasons}
-          series_info={seriesInfo}
-          include_margin
-          {...scroller}
-        />
-        {/* <Row
-          type='scaled_both'
-          List={relatedVideos}
-          title='Related Videos'
-          include_margin
-          {...scroller}
-        /> */}
-        <Row
-          type='long_horizontal'
-          content_type='series'
-          List={similarMovies}
-          title='Similar Web Series'
-          include_margin
-          {...scroller}
-        />
-      </div>
       </seasonContext.Provider>
     </>
   )

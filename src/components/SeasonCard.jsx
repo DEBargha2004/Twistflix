@@ -1,36 +1,37 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import seasonContext from '../hooks/seasonContext'
 import MovieContext from '../hooks/context'
 import urls from '../assets/url'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
-function SeasonCard ({ Item: Season,series_info }) {
+function SeasonCard ({ Item: Season, series_info }) {
   const navigate = useNavigate()
-  const { selectedSeason, setSelectedSeason } = useContext(seasonContext)
-  const { setSeriesCombined_list } = useContext(MovieContext)
+  const location = useLocation()
+  const [IsHovering, setIsHovering] = useState(false)
+  const [selectedSeries,setSelectedSeries] = useState(false)
 
-  function handleSeasonSelection_Navigate(){
-    setSelectedSeason((prev) => {
-        return (
-            {...prev,brief:{...Season}}
-        )
-    })
-    console.log('season is',Season);
-    navigate(`${Season.id}/${Season.name}`)
+  function handleSeasonSelection_Navigate () {
+    navigate(`/tv/${series_info.id}/${series_info.name}/${Season.id}/${Season.name}`)
   }
+  useEffect(()=>{
+    const seriesInView = location.pathname.split('/')[4]
+    console.log(seriesInView == Season.id);
+    if(Season.id == seriesInView){
+      console.log(Season.id);
+      setSelectedSeries(true)
+    }else{
+      setSelectedSeries(false)
+    }
+  },[Season,location.pathname])
   return (
     <div
-      className={`w-[180px] ${
-        Season.id === selectedSeason.brief.id
-          ? 'border-2 border-red-800'
-          : 'border-[1px] border-[#5c5c5c60]'
-      } mx-3 p-[15px] rounded-2xl flex flex-col items-center cursor-pointer`}
-      onClick={()=>handleSeasonSelection_Navigate()}
+      className={`w-[180px] mx-3 p-[15px] rounded-2xl flex flex-col items-center cursor-pointer overflow-hidden shrink-0 relative ${selectedSeries && 'border-2 border-red-700'}`}
+      onClick={() => handleSeasonSelection_Navigate()}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
     >
       <div
-        className={`w-[150px] h-[216px] bg-cover rounded-lg overflow-hidden transition-all duration-300 ease-out ${
-          Season.id === selectedSeason.brief.id && 'p-3'
-        }`}
+        className={`w-[150px] ${!Season.poster_path && 'h-[216px]'} bg-cover rounded-lg transition-all duration-300 ease-out ${IsHovering && 'opacity-50'}`}
       >
         <img
           src={`${urls.baseUrl}${Season.poster_path}`}
@@ -38,8 +39,18 @@ function SeasonCard ({ Item: Season,series_info }) {
           alt=''
         />
       </div>
-      <p className='text-white text-lg font-bold mt-2 text-center line-clamp-1'>{Season.name}</p>
-      <p className='text-slate-400 text-center line-clamp-1'>{Season.episode_count} episodes</p>
+      <div
+        className={`absolute transition-all duration-300 h-full w-full flex flex-col items-center justify-center top-0 left-0 ${
+          IsHovering ? 'opacity-100 scale-100' : 'opacity-0 scale-[10]'
+        }`}
+      >
+        <p className='text-white text-lg font-bold mt-2 text-center line-clamp-1 tracking-widest'>
+          S{Season.season_number}
+        </p>
+        <p className='text-slate-300 text-center line-clamp-1 font-semibold'>
+          {Season.episode_count} episodes
+        </p>
+      </div>
     </div>
   )
 }

@@ -1,57 +1,96 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
+import MovieContext from '../hooks/context'
 import Row from '../components/Row'
 import { apiKey } from '../assets/apiKey'
 import urls from '../assets/url'
 import Percent_svg from '../components/Percent_svg'
 import { useNavigate } from 'react-router-dom'
 import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
+import genre from '../functions/genre'
+import _ from 'lodash'
+import { similar } from '../functions/similar'
 
-function SeasonPage ({ season: { id, season_number,poster_path,overview,name }, genreType, percentage }) {
+function SeasonPage ({ season, series, seriesGenres }) {
   const navigate = useNavigate()
-  const [seasonInfo, setSeasonInfo] = useState({})
-  const [cast,setCast] = useState([])
+  const { setSeriesCombined_list, seriesCombined_list, setGlobalTrailer } =
+    useContext(MovieContext)
+  const [seasonInfo, setSeasonInfo] = useState(null)
+  const [cast, setCast] = useState([])
+  const [localTrailer, setLocalTrailer] = useState(null)
+  const [relatedVideos, setRelatedVideos] = useState([])
+  const [similarSeries, setSimilarSeries] = useState([])
+  const [genreType, setGenreType] = useState([])
+  const [scrollReset, setScrollReset] = useState(false)
+  const scroller = { scrollReset, setScrollReset }
   async function callEpisode_Info () {
     let response = await fetch(
-      `https://api.themoviedb.org/3/tv/${id}/season/${season_number}?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}?api_key=${apiKey}&language=en-US`
     )
     response = await response.json()
+    console.log(response)
+    setSeriesCombined_list(prev => {
+      let seriesIndex = _.findIndex(seriesCombined_list, { id: series.id })
+      let seasonIndex = _.findIndex(seriesCombined_list[seriesIndex].seasons, {
+        id: season.id
+      })
+      prev[seriesIndex].seasons[seasonIndex].episodes = response.episodes
+      return [...prev]
+    })
     setSeasonInfo(response)
     response = await fetch(
-      `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/credits?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}/credits?api_key=${apiKey}&language=en-US`
     )
     response = await response.json()
-    setCast([...response.cast,...response.crew])
+    setCast([...response.cast, ...response.crew])
+    response = await fetch(
+      `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}/videos?api_key=${apiKey}&language=en-US`
+    )
+    response = await response.json()
+    setRelatedVideos(response.results)
+    response = response.results.find(item => item.type === 'Trailer')
+    setLocalTrailer(response)
   }
 
   useEffect(() => {
-    console.log('season page rendered');
-  }, [])
-
-  useEffect(() => {
-    const page = document.querySelector('html')
-    page.scrollTo({
+    console.log('season page rendered')
+    callEpisode_Info()
+    setSimilarSeries(similar(series, seriesCombined_list))
+    document.querySelector('html').scrollTo({
       top: 0,
       behavior: 'smooth'
     })
-  }, [])
+  }, [season])
+
+  useEffect(() => {
+    setScrollReset(true)
+  }, [season])
+  useEffect(() => {
+    if (!genreType.length) {
+      genre(series.genre_ids, setGenreType, seriesGenres)
+    }
+  }, [seriesGenres, series])
+
   return (
     <>
-      <div className='flex justify-around m-10 mt-[100px] text-white'>
-      hello
-        {/* <div className='flex-1 flex justify-center'>
-          <div className='w-[400px] overflow-hidden rounded-lg'>
+      <div className='flex justify-around m-10 mt-[100px]'>
+        <div className='flex-1 flex justify-center'>
+          <div className='w-[400px] h-fit overflow-hidden rounded-lg'>
             <img
-              src={`${urls.baseUrl}${poster_path}`}
+              src={`${urls.baseUrl}${seasonInfo?.poster_path}`}
               className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70 hover:bg-[#00000070]'
               alt=''
             />
           </div>
         </div>
         <div className='flex-1'>
-          <p className='text-white text-[50px] font-bold mb-10'>
-            {name}
+          <p className='text-white text-[50px] font-bold mb-2'>{series.name}</p>
+          <p className='text-xl font-bold text-slate-400 mb-2'>
+            {seasonInfo?.name}
           </p>
-          <p className='text-white w-[80%]'>{overview}</p>
+          <p className='text-slate-400 font-semibold mb-10'>
+            {season.episode_count} episodes
+          </p>
+          <p className='text-white w-[80%]'>{seasonInfo?.overview}</p>
           <p className='mt-10'>
             {genreType.map((item, index) => (
               <span
@@ -64,11 +103,9 @@ function SeasonPage ({ season: { id, season_number,poster_path,overview,name }, 
           </p>
           <p className='mt-5 text-white text-lg'>
             {`Release Date - `}
-            <span className='font-semibold'>
-              {movieItem.release_date || movieItem.first_air_date}
-            </span>
+            <span className='font-semibold'>{seasonInfo?.air_date}</span>
           </p>
-          <Percent_svg percentage={percentage} />
+          <Percent_svg percentage={Math.round(series.vote_average * 10)} />
           <button
             className='bg-white mr-2 mt-12 text-lg uppercase px-5 py-2 font-semibold rounded-md transition-all hover:bg-[#ffffffaf]'
             onClick={() =>
@@ -77,10 +114,27 @@ function SeasonPage ({ season: { id, season_number,poster_path,overview,name }, 
           >
             Play
           </button>
-        </div> */}
+        </div>
       </div>
       <div>
-        {/* <Row
+        <Row
+          type='episode'
+          title='Episodes'
+          List={season.episodes}
+          series_info={series}
+          season_info={season}
+          include_margin
+          {...scroller}
+        />
+        <Row
+          type='season'
+          title='Season'
+          List={series.seasons}
+          series_info={series}
+          include_margin
+          {...scroller}
+        />
+        <Row
           type='long_vertical'
           List={cast}
           title='Cast'
@@ -88,31 +142,20 @@ function SeasonPage ({ season: { id, season_number,poster_path,overview,name }, 
           {...scroller}
         />
         <Row
-          type='season'
-          title='Seasons'
-          List={seriesInfo.seasons}
-          series_info={{
-            id: seriesInfo.id,
-            name: seriesInfo.original_name
-          }}
-          include_margin
-          {...scroller}
-        />
-        <Row
           type='scaled_both'
+          title='related videos'
           List={relatedVideos}
-          title='Related Videos'
           include_margin
           {...scroller}
         />
         <Row
           type='long_horizontal'
+          title='Similar web series'
           content_type='series'
-          List={similarMovies}
-          title='Similar Web Series'
+          List={similarSeries}
           include_margin
           {...scroller}
-        /> */}
+        />
       </div>
     </>
   )

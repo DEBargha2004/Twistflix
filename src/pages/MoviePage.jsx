@@ -5,7 +5,7 @@ import { useState, useEffect, useContext } from 'react'
 import MovieContext from '../hooks/context'
 import genre from '../functions/genre'
 import removeDup from '../functions/removeDup'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,useLocation } from 'react-router-dom'
 import Percent_svg from '../components/Percent_svg'
 import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
 import { addIf_DoesNot_Exist } from '../functions/addIf_DoesNot_Exist'
@@ -15,6 +15,7 @@ import _ from 'lodash'
 
 function MoviePage ({ movieItem, row }) {
   const navigate = useNavigate()
+  const location = useLocation()
   const { genre_ids } = movieItem
   const [similarMovies, setSimilarMovies] = useState([])
   const [genreType, setGenreType] = useState([])
@@ -28,7 +29,8 @@ function MoviePage ({ movieItem, row }) {
     combined_list,
     setCombined_list,
     collection,
-    setCollection
+    setCollection,
+    setInView
   } = useContext(MovieContext)
   const [localTrailer, setLocalTrailer] = useState([])
   const [percentage, setPercentage] = useState(
@@ -75,6 +77,14 @@ function MoviePage ({ movieItem, row }) {
     setGenreType([])
     genre(genre_ids, setGenreType, genres)
   }, [])
+  useEffect(()=>{
+    if(location.pathname.includes('/tv')){
+      setInView(1)
+    }else{
+      setInView(0)
+    }
+  },[location.pathname])
+
   return (
     <>
       <div className='flex justify-around m-10 mt-[100px]' ref={MoviePageRef}>

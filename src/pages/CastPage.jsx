@@ -5,6 +5,7 @@ import MovieContext from '../hooks/context'
 import Row from '../components/Row'
 import { useLocation } from 'react-router-dom'
 import _ from 'lodash'
+import { combineSeries } from '../functions/combineSeries'
 
 function CastPage ({ Cast }) {
   const location = useLocation()
@@ -32,62 +33,10 @@ function CastPage ({ Cast }) {
     )
     response = await response.json()
     setCurrentCastSeries([...response.cast, ...response.crew])
-
-    response.cast = response.cast.map(
-      (
-        {
-          id,
-          genre_ids,
-          original_name,
-          vote_average,
-          first_air_date,
-          overview,
-          backdrop_path,
-          poster_path
-        },
-        index
-      ) => {
-        return {
-          id,
-          genre_ids,
-          original_name,
-          vote_average,
-          first_air_date,
-          overview,
-          backdrop_path,
-          poster_path
-        }
-      }
-    )
-    response.crew = response.crew.map(
-      (
-        {
-          id,
-          genre_ids,
-          original_name,
-          name,
-          vote_average,
-          first_air_date,
-          overview,
-          backdrop_path,
-          poster_path
-        },
-        index
-      ) => {
-        return {
-          id,
-          genre_ids,
-          original_name,
-          name,
-          vote_average,
-          first_air_date,
-          overview,
-          backdrop_path,
-          poster_path
-        }
-      }
-    )
-    setSeriesCombined_list(prev => [...prev, ...response.cast,...response.crew])
+    console.log(response)
+    setSeriesCombined_list(prev => {
+      return combineSeries(prev, [...response.cast, ...response.crew])
+    })
   }
   useEffect(() => {
     callSpecificCast()

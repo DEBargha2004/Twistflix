@@ -1,16 +1,19 @@
 import React, { useEffect, useState, useRef, useContext } from 'react'
 import MovieContext from '../hooks/context'
 import { motion } from 'framer-motion'
-import { apiKey } from '../assets/apiKey'
+import { combineSeries } from '../functions/combineSeries'
 import urls from '../assets/url'
 import { addIf_DoesNot_Exist } from '../functions/addIf_DoesNot_Exist'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 function Searchbar () {
   const delay = 400
   const navigate = useNavigate()
-  const { setCombined_list, combined_list } = useContext(MovieContext)
+  const location = useLocation()
+  const { setCombined_list, combined_list, setSeriesCombined_list } =
+    useContext(MovieContext)
   const [isClicked, setIsClicked] = useState(false)
+  const [parentPath, setParentPath] = useState('')
   const [isFocused, setIsFocused] = useState(false)
   const [query, setQuery] = useState(null)
   const [searchList, setSearchList] = useState([])
@@ -35,15 +38,23 @@ function Searchbar () {
     // setIsFocused(false)
   }
   async function callQuery () {
-    let response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${query}*&page=1`
-    )
+    let response = await fetch(urls.queryUrl(parentPath, query))
     response = await response.json()
+    console.log(response)
     setSearchList(response.results)
   }
   function setMovieRoute (item) {
-    setCombined_list(addIf_DoesNot_Exist([item], combined_list))
-    navigate(`/${item.id}/${item.original_title}`)
+    console.log(combined_list,item);
+    parentPath !== 'tv'
+      ? setCombined_list(addIf_DoesNot_Exist([item], combined_list))
+      : setSeriesCombined_list(prev => combineSeries(prev, [item]))
+    parentPath === 'movie'
+      ? navigate(`/${item.id}/${item.original_title || item.original_name}`)
+      : navigate(
+          `/${parentPath}/${item.id}/${
+            item.original_title || item.original_name
+          }`
+        )
     setIsFocused(false)
   }
   useEffect(() => {
@@ -90,6 +101,14 @@ function Searchbar () {
         }
       })
   }, [])
+  useEffect(() => {
+    const relative = location.pathname.split('/')[1]
+    if (relative === 'tv' || relative === 'person') {
+      setParentPath(relative)
+    } else {
+      setParentPath('movie')
+    }
+  }, [location.pathname])
   return (
     <div className='relative flex flex-col items-center'>
       <div
@@ -142,7 +161,7 @@ function Searchbar () {
                 alt=''
               />
               <p className='text-white text-lg truncate '>
-                {item.original_title}
+                {item.original_title || item.original_name}
               </p>
             </div>
           ))}

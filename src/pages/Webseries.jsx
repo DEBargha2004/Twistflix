@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom'
 function WebSeriesPage () {
   const { seriesGenres,setIndex } = useContext(MovieContext)
   useEffect(()=>{
-    location.pathname.includes('/webseries') && setIndex(1)
+    location.pathname.includes('/tv') && setIndex(1)
   },[])
   return (
     <div>

@@ -132,7 +132,7 @@ function Hero () {
                 className='text-lg text-white px-4 py-2 rounded-sm hover:bg-[#00000080] transition-all'
                 onClick={() =>
                   navigate(
-                    `/webseries/${seriesHero[seriesIndex]?.id}/${seriesHero[seriesIndex]?.original_name}`
+                    `/tv/${seriesHero[seriesIndex]?.id}/${seriesHero[seriesIndex]?.original_name}`
                   )
                 }
               >

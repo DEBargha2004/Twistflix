@@ -104,7 +104,7 @@ function App () {
       // inside a cast profile or a moviepage
       setCombined_list(movies) // which is not provided initially
     }
-    location.pathname.includes('/webseries') ? setInView(1) : setInView(0)
+    location.pathname.includes('/tv') ? setInView(1) : setInView(0)
   }, [])
 
   useEffect(() => {
@@ -137,7 +137,7 @@ function App () {
   useEffect(() => {
     if (seriesGenres.length) {
       if (movieListChecker(seriesGenres)) {
-        if (location.pathname === '/webseries') {
+        if (location.pathname === '/tv') {
           let series_From_Genres_Nested_Array = seriesGenres.map(
             item => item.movieList
           )
@@ -203,7 +203,7 @@ function App () {
       {location.pathname !== '/player' && <Navbar />}
       <Routes>
         <Route path='/' element={<Movies />} />
-        <Route path='/webseries' element={<Webseries />} />
+        <Route path='/tv' element={<Webseries />} />
         <Route path='/player' element={<Player Item={globalTrailer} />} />
         {routes.map((item, index) => {
           return (
@@ -211,7 +211,7 @@ function App () {
               key={index}
               path={
                 item.card_type
-                  ? `/${item.id}/${item.original_name}`
+                  ? `person/${item.id}/${item.original_name}`
                   : `/${item.id}/${item.original_title}`
               }
               element={
@@ -228,7 +228,7 @@ function App () {
           return (
             <Route
               key={index}
-              path={`/webseries/${item.id}/${item.original_name}/*`}
+              path={`/tv/${item.id}/${item.original_name}`}
               element={
                 item.card_type ? (
                   <CastPage key={index} Cast={item} />
@@ -240,30 +240,46 @@ function App () {
                   />
                 )
               }
-            >
-              {item.seasons?.map((season, season_index) => {
-                location.pathname.includes(`/${season.id}`) &&
-                  console.log(`${season.id}/${season.name}`)
-                return (
-                  <Route
-                    key={season_index}
-                    path={`${season.id}/${season.name}/*`}
-                    element={<div className='text-white'>page</div>}
-                  >
-                    {/* {season.episodes?.map((episode, episode_index) => {
-                      return (
-                        <Route
-                          key={episode_index}
-                          path={`${episode.id}/${episode.name}`}
-                          element={<EpisodePage Episode={episode} />}
-                        />
-                      )
-                    })} */}
-                  </Route>
-                )
-              })}
-            </Route>
+            />
           )
+        })}
+        {seriesCombined_list.map((series, index) => {
+          if (series.seasons) {
+            return series.seasons.map((season, season_index) => {
+              return (
+                <Route
+                  path={`/tv/${series.id}/${series.original_name}/${season.id}/${season.name}`}
+                  element={
+                    <SeasonPage
+                      season={season}
+                      series={series}
+                      seriesGenres={seriesGenres}
+                    />
+                  }
+                />
+              )
+            })
+          }
+        })}
+        {seriesCombined_list.map((series, series_index) => {
+          if (series.seasons) {
+            return series.seasons.map((season, season_index) => {
+              if (season.episodes) {
+                return season.episodes.map((episode, episode_index) => {
+                  return (
+                    <Route
+                      path={`/tv/${series.id}/${series.name}/${season.id}/${season.name}/${episode.id}/${episode.name}`}
+                      element={
+                        <EpisodePage
+                          {...{ series, season, episode, seriesGenres }}
+                        />
+                      }
+                    />
+                  )
+                })
+              }
+            })
+          }
         })}
       </Routes>
       {location.pathname !== '/player' && <Footer />}

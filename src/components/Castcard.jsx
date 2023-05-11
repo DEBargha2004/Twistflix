@@ -8,7 +8,7 @@ function Castcard({ Item }) {
   const navigate = useNavigate()
   function CreateandRedirect(){
     setCombined_list(prev => [...prev,{...Item,card_type:'cast'}])
-    navigate(`/${Item.id}/${Item.original_name}`)
+    navigate(`/person/${Item.id}/${Item.original_name}`)
   }
   return (
     <div className='mx-3 p-2 shadow-sm shadow-[#ffffff34] h-fit rounded-xl cursor-pointer' onClick={()=>CreateandRedirect()}>

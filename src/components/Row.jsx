@@ -11,7 +11,8 @@ function Row ({
   include_margin,
   id,
   content_type,
-  series_info
+  series_info,
+  season_info
 }) {
   const row = useRef(null)
   function Backward () {
@@ -20,6 +21,7 @@ function Row ({
   function Forward () {
     row.current.scrollLeft += 400
   }
+
   useEffect(() => {
     if (scrollReset) {
       setTimeout(() => {
@@ -31,16 +33,14 @@ function Row ({
       }, 1000)
     }
   }, [scrollReset])
-
   return (
     <div className={`mx-4 relative ${include_margin && 'mb-[80px]'}`}>
       <p className='text-white font-semibold text-xl uppercase'>{title}</p>
       <div
-        className={`flex w-full overflow-x-scroll py-1 ml-2 my-3 scroll-smooth`}
+        className={`flex w-full overflow-x-scroll py-7 ml-2 my-3 scroll-smooth`}
         ref={row}
       >
-        {list
-          ? list.map((Item, index) => {
+        {list?.map((Item, index) => {
               return (
                 <ItemCard
                   type={type}
@@ -49,10 +49,10 @@ function Row ({
                   key={index}
                   content_type={content_type}
                   series_info={series_info}
+                  season_info={season_info}
                 />
               )
-            })
-          : null}
+            })}
         {id && <CallNew_Card id={id} />}
       </div>
       <div

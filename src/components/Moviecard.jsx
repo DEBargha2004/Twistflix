@@ -24,7 +24,7 @@ function Card ({ Item: movieItem, type, content_type }) {
 
   function handleNavigate () {
     const movieRoute = content_type === 'series'
-      ? `/webseries/${movieItem.id}/${
+      ? `/tv/${movieItem.id}/${
           movieItem.original_title || movieItem.original_name
         }`
       : `/${movieItem.id}/${
