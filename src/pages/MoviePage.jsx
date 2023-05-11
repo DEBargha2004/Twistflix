@@ -11,6 +11,7 @@ import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
 import { addIf_DoesNot_Exist } from '../functions/addIf_DoesNot_Exist'
 import { callCast_Videos } from '../functions/callCast_Videos'
 import { ifIncludes } from '../functions/ifIncludes'
+import _ from 'lodash'
 
 function MoviePage ({ movieItem, row }) {
   const navigate = useNavigate()
@@ -117,17 +118,30 @@ function MoviePage ({ movieItem, row }) {
         </div>
       </div>
       <div>
-        <Row type='long_vertical' List={cast} title='Cast' include_margin {...scrollReset} />
+        <Row
+          type='long_vertical'
+          List={cast}
+          title='Cast'
+          include_margin
+          {...scrollReset}
+        />
         <Row
           type='long_horizontal'
-          List={movies_In_Series}
+          List={_.uniqBy(movies_In_Series,'id')}
           title='Movies in series'
           include_margin
           {...scroller}
         />
-        {/* <Row type='scaled_both' List={relatedVideos} title='Related Videos' include_margin  {...scroller} /> */}
+        <Row
+          type='scaled_both'
+          List={relatedVideos}
+          title='Related Videos'
+          include_margin
+          {...scroller}
+        />
         <Row
           type='long_horizontal'
+          content_type='movie'
           List={similarMovies}
           title='Similar Movies'
           include_margin

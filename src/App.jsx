@@ -14,6 +14,10 @@ import Navbar from './components/Navbar'
 import Webseries from './pages/Webseries'
 import urls from './assets/url'
 import WebSeriesPage from './pages/WebSeriesPage'
+import SeasonPage from './pages/SeasonPage'
+import EpisodePage from './pages/EpisodePage'
+import { combineSeries } from './functions/combineSeries'
+import _ from 'lodash'
 
 function App () {
   const location = useLocation()
@@ -22,7 +26,6 @@ function App () {
   const [seriesCombined_list, setSeriesCombined_list] = useState([])
   const [seriesRandomArray, setSeriesRandomArray] = useState([])
   const [seriesHero, setSeriesHero] = useState([])
-  const [seriesRoutes, setSeriesRoutes] = useState([])
   const [seriesTrailer, setSeriesTrailer] = useState([])
   const [combined_list, setCombined_list] = useState([])
   const [routes, setRoutes] = useState([])
@@ -88,7 +91,7 @@ function App () {
       if (movieListChecker(genres)) {
         if (location.pathname === '/') {
           setCombined_list([...combine(genres)]) // when in homepage and refreshed not
-          console.log('movies added') // interrupted by the below one because genre
+          // interrupted by the below one because genre
         } // id changing multiple times
       }
     }
@@ -101,7 +104,6 @@ function App () {
       // inside a cast profile or a moviepage
       setCombined_list(movies) // which is not provided initially
     }
-    console.log(location.pathname);
     location.pathname.includes('/webseries') ? setInView(1) : setInView(0)
   }, [])
 
@@ -136,30 +138,35 @@ function App () {
     if (seriesGenres.length) {
       if (movieListChecker(seriesGenres)) {
         if (location.pathname === '/webseries') {
-          setSeriesCombined_list([...combine(seriesGenres)])
+          let series_From_Genres_Nested_Array = seriesGenres.map(
+            item => item.movieList
+          )
+          let series_From_Genres = [].concat(...series_From_Genres_Nested_Array)
+          setSeriesCombined_list(prev => [
+            ..._.uniqBy(combineSeries(prev, series_From_Genres), 'id')
+          ])
         }
       }
     }
   }, [seriesGenres])
 
   useEffect(() => {
-    setSeriesRandomArray(uniqueRandomNum(7, 320))
     const series = JSON.parse(localStorage.getItem('saved_series'))
     if (series) {
-      setSeriesCombined_list(series)
+      setSeriesCombined_list(_.uniqBy(series, 'id'))
     }
   }, [])
 
   useEffect(() => {
+    setSeriesRandomArray(uniqueRandomNum(7, seriesCombined_list.length))
     if (seriesCombined_list.length) {
-      // caching and setting routes
-      setSeriesRoutes([...seriesCombined_list])
+      // caching
       localStorage.setItem('saved_series', JSON.stringify(seriesCombined_list))
     }
   }, [seriesCombined_list])
 
   useEffect(() => {
-    if (seriesRandomArray.length && seriesCombined_list.length >= 320) {
+    if (seriesRandomArray.length && seriesHero.length != 7) {
       callSeriesVideos_Set()
     }
   }, [seriesRandomArray, seriesCombined_list])
@@ -217,19 +224,45 @@ function App () {
             />
           )
         })}
-        {seriesRoutes.map((item, index) => {
+        {seriesCombined_list.map((item, index) => {
           return (
             <Route
               key={index}
-              path={`/webseries/${item.id}/${item.original_name}`}
+              path={`/webseries/${item.id}/${item.original_name}/*`}
               element={
                 item.card_type ? (
                   <CastPage key={index} Cast={item} />
                 ) : (
-                  <WebSeriesPage key={index} movieItem={item} row={seriesCombined_list} />
+                  <WebSeriesPage
+                    key={index}
+                    movieItem={item}
+                    row={seriesCombined_list}
+                  />
                 )
               }
-            />
+            >
+              {item.seasons?.map((season, season_index) => {
+                location.pathname.includes(`/${season.id}`) &&
+                  console.log(`${season.id}/${season.name}`)
+                return (
+                  <Route
+                    key={season_index}
+                    path={`${season.id}/${season.name}/*`}
+                    element={<div className='text-white'>page</div>}
+                  >
+                    {/* {season.episodes?.map((episode, episode_index) => {
+                      return (
+                        <Route
+                          key={episode_index}
+                          path={`${episode.id}/${episode.name}`}
+                          element={<EpisodePage Episode={episode} />}
+                        />
+                      )
+                    })} */}
+                  </Route>
+                )
+              })}
+            </Route>
           )
         })}
       </Routes>

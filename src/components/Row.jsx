@@ -10,7 +10,8 @@ function Row ({
   setScrollReset,
   include_margin,
   id,
-  content_type
+  content_type,
+  series_info
 }) {
   const row = useRef(null)
   function Backward () {
@@ -41,7 +42,14 @@ function Row ({
         {list
           ? list.map((Item, index) => {
               return (
-                <ItemCard type={type} Item={Item} index={index} key={index} content_type={content_type} />
+                <ItemCard
+                  type={type}
+                  Item={Item}
+                  index={index}
+                  key={index}
+                  content_type={content_type}
+                  series_info={series_info}
+                />
               )
             })
           : null}

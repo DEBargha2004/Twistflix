@@ -1,6 +1,5 @@
 export function uniqueRandomNum(count = 7, limit) {
     let uniqueRandomNumArray = []
-    console.log(limit,' from uniqueRandomNum');
     if (limit) {
         function randomNumGenerator() {
             let random = Math.floor((Math.random()) * limit)
@@ -15,6 +14,5 @@ export function uniqueRandomNum(count = 7, limit) {
             uniqueRandomNumArray.push(randomInt)
         }
     }
-    console.log(uniqueRandomNumArray);
     return uniqueRandomNumArray
 }

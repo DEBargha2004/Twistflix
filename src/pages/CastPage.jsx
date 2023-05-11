@@ -3,9 +3,13 @@ import { apiKey } from '../assets/apiKey'
 import urls from '../assets/url'
 import MovieContext from '../hooks/context'
 import Row from '../components/Row'
+import { useLocation } from 'react-router-dom'
+import _ from 'lodash'
 
 function CastPage ({ Cast }) {
-  const { setCombined_list,setSeriesCombined_list } = useContext(MovieContext)
+  const location = useLocation()
+  const { setCombined_list, setSeriesCombined_list, setInView } =
+    useContext(MovieContext)
   const [scrollReset, setScrollReset] = useState(false)
   const [currentCast, setCurrentCast] = useState({})
   const [currentCastMovies, setCurrentCastMovies] = useState([])
@@ -28,7 +32,62 @@ function CastPage ({ Cast }) {
     )
     response = await response.json()
     setCurrentCastSeries([...response.cast, ...response.crew])
-    setSeriesCombined_list(prev => [...prev, ...response.cast, ...response.crew])
+
+    response.cast = response.cast.map(
+      (
+        {
+          id,
+          genre_ids,
+          original_name,
+          vote_average,
+          first_air_date,
+          overview,
+          backdrop_path,
+          poster_path
+        },
+        index
+      ) => {
+        return {
+          id,
+          genre_ids,
+          original_name,
+          vote_average,
+          first_air_date,
+          overview,
+          backdrop_path,
+          poster_path
+        }
+      }
+    )
+    response.crew = response.crew.map(
+      (
+        {
+          id,
+          genre_ids,
+          original_name,
+          name,
+          vote_average,
+          first_air_date,
+          overview,
+          backdrop_path,
+          poster_path
+        },
+        index
+      ) => {
+        return {
+          id,
+          genre_ids,
+          original_name,
+          name,
+          vote_average,
+          first_air_date,
+          overview,
+          backdrop_path,
+          poster_path
+        }
+      }
+    )
+    setSeriesCombined_list(prev => [...prev, ...response.cast,...response.crew])
   }
   useEffect(() => {
     callSpecificCast()
@@ -40,6 +99,7 @@ function CastPage ({ Cast }) {
       })
     }, 500)
   }, [Cast])
+
   return (
     <>
       <div className='flex justify-around m-10 mt-[100px]'>
@@ -78,7 +138,7 @@ function CastPage ({ Cast }) {
           content_type='movie'
           title='Related Movies'
           include_margin
-          List={currentCastMovies}
+          List={_.uniqBy(currentCastMovies, 'id')}
           setScrollReset={setScrollReset}
           scrollReset={scrollReset}
         />
@@ -87,7 +147,7 @@ function CastPage ({ Cast }) {
           content_type='series'
           title='Related Web series'
           include_margin
-          List={currentCastSeries}
+          List={_.uniqBy(currentCastSeries, 'id')}
           setScrollReset={setScrollReset}
           scrollReset={scrollReset}
         />

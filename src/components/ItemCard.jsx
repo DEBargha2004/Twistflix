@@ -3,7 +3,7 @@ import Castcard from './Castcard'
 import Videocard from './Videocard'
 import SeasonCard from './SeasonCard'
 
-export function ItemCard ({ type, Item, content_type }) {
+export function ItemCard ({ type, Item, content_type,series_info }) {
   if (type === 'long_horizontal') {
     return <Moviecard Item={Item} type={type} content_type={content_type} />
   } else if (type === 'long_vertical') {
@@ -11,6 +11,6 @@ export function ItemCard ({ type, Item, content_type }) {
   } else if (type === 'scaled_both') {
     return <Videocard Item={Item} />
   } else if (type === 'season') {
-    return <SeasonCard Item={Item} />
+    return <SeasonCard Item={Item} series_info={series_info} />
   }
 }

@@ -42,7 +42,7 @@ function Searchbar () {
     setSearchList(response.results)
   }
   function setMovieRoute (item) {
-    addIf_DoesNot_Exist([item], combined_list, setCombined_list)
+    setCombined_list(addIf_DoesNot_Exist([item], combined_list))
     navigate(`/${item.id}/${item.original_title}`)
     setIsFocused(false)
   }

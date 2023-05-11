@@ -16,7 +16,7 @@ export async function callCast_Videos ({
     `https://api.themoviedb.org/3/movie/${movieItem.id}/credits?api_key=${apiKey}`
   )
   response = await response.json()
-  setCast([...response.cast,...response.crew])
+  setCast([...response.cast, ...response.crew])
   response = await fetch(
     `https://api.themoviedb.org/3/movie/${movieItem.id}/videos?api_key=${apiKey}&language=en-US`
   )
@@ -35,13 +35,11 @@ export async function callCast_Videos ({
     response = await response.json()
     setMovies_In_Series(response.parts)
     setCollection(prev => ({ ...prev, [collection_id]: response.parts }))
-    addIf_DoesNot_Exist(response.parts, combined_list, setCombined_list)
+    setCombined_list(addIf_DoesNot_Exist(response.parts, combined_list))
   } else {
     setMovies_In_Series(collection[collection_id])
-    addIf_DoesNot_Exist(
-      collection[collection_id],
-      combined_list,
-      setCombined_list
+    setCombined_list(
+      addIf_DoesNot_Exist(collection[collection_id], combined_list)
     )
   }
 }

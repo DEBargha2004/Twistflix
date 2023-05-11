@@ -11,10 +11,6 @@ function genresUrl(type = 'movies'){
 async function fetchGenres(setGenresOfType,type = 'movies') {
     let response = await fetch(genresUrl(type))
     response = await response.json()
-    if(type === 'series'){
-        console.log(response);
-    }
-    console.log(type);
     setGenresOfType(response.genres)
 }
 
