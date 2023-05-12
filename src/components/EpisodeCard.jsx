@@ -9,11 +9,11 @@ function EpisodeCard ({ Item: Episode, series_info, season_info }) {
   const [IsSelected, setIsSelected] = useState(false)
   function handleNavigate () {
     navigate(
-      `/tv/${series_info.id}/${series_info.name}/${season_info.id}/${season_info.name}/${Episode.id}/${Episode.name}`
+      `/tv/${series_info.id}/${season_info.id}/${Episode.id}`
     )
   }
   useEffect(() => {
-    const episodeIdInUrl = location.pathname.split('/')[6]
+    const episodeIdInUrl = location.pathname.split('/')[4]
     if (Episode.id == episodeIdInUrl) {
       setIsSelected(true)
     } else {

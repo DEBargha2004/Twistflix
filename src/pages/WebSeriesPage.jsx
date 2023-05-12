@@ -61,6 +61,7 @@ function WebSeriesPage ({ movieItem, row }) {
   }
 
   useEffect(() => {
+    console.log('webseries page rendered');
     if (movieItem && !seriesInfo.seasons) {
       callSeriesCast_Videos()
       let movieContainer = []
@@ -153,13 +154,13 @@ function WebSeriesPage ({ movieItem, row }) {
             include_margin
             {...scroller}
           />
-          <Row
+          {/* <Row
             type='scaled_both'
             List={relatedVideos}
             title='Related Videos'
             include_margin
             {...scroller}
-          />
+          /> */}
           <Row
             type='long_horizontal'
             content_type='series'

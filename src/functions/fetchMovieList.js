@@ -3,35 +3,7 @@ import urls from '../assets/url'
 async function fetcher (id, page = 1, type) {
   let response = await fetch(urls.listOfType(type, id, page))
   response = await response.json()
-  response = response.results.map(
-    (
-      {
-        id,
-        genre_ids,
-        original_name,
-        name,
-        vote_average,
-        first_air_date,
-        overview,
-        backdrop_path,
-        poster_path
-      },
-      index
-    ) => {
-      return {
-        id,
-        genre_ids,
-        original_name,
-        name,
-        vote_average,
-        first_air_date,
-        overview,
-        backdrop_path,
-        poster_path
-      }
-    }
-  )
-  return response
+  return response.results
 }
 
 async function fetchMovieList (genres, setGenres, type) {

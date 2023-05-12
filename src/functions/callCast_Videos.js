@@ -27,6 +27,7 @@ export async function callCast_Videos ({
     `https://api.themoviedb.org/3/movie/${movieItem.id}?api_key=${apiKey}&language=en-US`
   )
   response = await response.json()
+  console.log(response);
   let collection_id = response.belongs_to_collection.id
   if (!collection[collection_id]) {
     response = await fetch(

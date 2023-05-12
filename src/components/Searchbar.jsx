@@ -44,16 +44,16 @@ function Searchbar () {
     setSearchList(response.results)
   }
   function setMovieRoute (item) {
-    console.log(combined_list,item);
+    console.log(parentPath)
     parentPath !== 'tv'
-      ? setCombined_list(addIf_DoesNot_Exist([item], combined_list))
+      ? parentPath === 'person' ? 
+      setCombined_list(addIf_DoesNot_Exist([{...item,card_type:'person'}], combined_list)):
+      setCombined_list(addIf_DoesNot_Exist([item], combined_list))
       : setSeriesCombined_list(prev => combineSeries(prev, [item]))
     parentPath === 'movie'
-      ? navigate(`/${item.id}/${item.original_title || item.original_name}`)
+      ? navigate(`/${item.id}`)
       : navigate(
-          `/${parentPath}/${item.id}/${
-            item.original_title || item.original_name
-          }`
+          `/${parentPath}/${item.id}`
         )
     setIsFocused(false)
   }
@@ -156,7 +156,7 @@ function Searchbar () {
               onClick={() => setMovieRoute(item)}
             >
               <img
-                src={`${urls.baseUrl}${item.backdrop_path}`}
+                src={`${urls.baseUrl}${item.backdrop_path || item.profile_path}`}
                 className='w-8 mr-3 rounded-sm'
                 alt=''
               />

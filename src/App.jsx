@@ -113,6 +113,7 @@ function App () {
       setRoutes([...combined_list])
       localStorage.setItem('saved_movies', JSON.stringify(combined_list))
     }
+    console.log(combined_list.length)
   }, [combined_list])
 
   useEffect(() => {
@@ -211,8 +212,8 @@ function App () {
               key={index}
               path={
                 item.card_type
-                  ? `person/${item.id}/${item.original_name}`
-                  : `/${item.id}/${item.original_title}`
+                  ? `person/${item.id}`
+                  : `/${item.id}`
               }
               element={
                 item.card_type ? (
@@ -227,18 +228,14 @@ function App () {
         {seriesCombined_list.map((item, index) => {
           return (
             <Route
-              key={index}
-              path={`/tv/${item.id}/${item.original_name}`}
+              key={item.id}
+              path={`/tv/${item.id}`}
               element={
-                item.card_type ? (
-                  <CastPage key={index} Cast={item} />
-                ) : (
-                  <WebSeriesPage
-                    key={index}
-                    movieItem={item}
-                    row={seriesCombined_list}
-                  />
-                )
+                <WebSeriesPage
+                  key={index}
+                  movieItem={item}
+                  row={seriesCombined_list}
+                />
               }
             />
           )
@@ -248,7 +245,8 @@ function App () {
             return series.seasons.map((season, season_index) => {
               return (
                 <Route
-                  path={`/tv/${series.id}/${series.original_name}/${season.id}/${season.name}`}
+                key={season.id}
+                  path={`/tv/${series.id}/${season.id}`}
                   element={
                     <SeasonPage
                       season={season}
@@ -268,7 +266,8 @@ function App () {
                 return season.episodes.map((episode, episode_index) => {
                   return (
                     <Route
-                      path={`/tv/${series.id}/${series.name}/${season.id}/${season.name}/${episode.id}/${episode.name}`}
+                    key={episode.id}
+                      path={`/tv/${series.id}/${season.id}/${episode.id}`}
                       element={
                         <EpisodePage
                           {...{ series, season, episode, seriesGenres }}

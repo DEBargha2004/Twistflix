@@ -15,7 +15,7 @@ function Navbar() {
     return () => window.removeEventListener('scroll', scrollInfo)
   }, [])
   return (
-    <div className={`text-white h-[70px] px-10 flex justify-between items-center fixed top-0 w-full z-10 ${opacity === 1 && 'shadow-lg shadow-[#41414121]'}`}>
+    <div className={`text-white h-[70px] px-10 flex justify-between items-center fixed top-0 w-full z-40 ${opacity === 1 && 'shadow-lg shadow-[#41414121]'}`}>
       <img src={urls.appLogo} alt="App-logo" className='h-8' />
       <Searchbar />
       <Additional />

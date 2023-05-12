@@ -23,13 +23,7 @@ function Card ({ Item: movieItem, type, content_type }) {
   const location = useLocation()
 
   function handleNavigate () {
-    const movieRoute = content_type === 'series'
-      ? `/tv/${movieItem.id}/${
-          movieItem.original_title || movieItem.original_name
-        }`
-      : `/${movieItem.id}/${
-          movieItem.original_title || movieItem.original_name
-        }`
+    const movieRoute = `/tv/${movieItem.id}`
     navigate(movieRoute)
   }
   function genreTypeSetter (content_type) {

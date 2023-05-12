@@ -14,6 +14,12 @@ function Additional_Child ({ Title, id, route }) {
       onClick={() => {
         setInView(id)
         navigate(route)
+        setTimeout(() => {
+          document.querySelector('html').scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          })
+        }, 500)
       }}
     >
       <span

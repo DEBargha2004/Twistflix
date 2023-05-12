@@ -1,6 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-import seasonContext from '../hooks/seasonContext'
-import MovieContext from '../hooks/context'
 import urls from '../assets/url'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -8,30 +6,43 @@ function SeasonCard ({ Item: Season, series_info }) {
   const navigate = useNavigate()
   const location = useLocation()
   const [IsHovering, setIsHovering] = useState(false)
-  const [selectedSeries,setSelectedSeries] = useState(false)
+  const [selectedSeries, setSelectedSeries] = useState(false)
 
   function handleSeasonSelection_Navigate () {
-    navigate(`/tv/${series_info.id}/${series_info.name}/${Season.id}/${Season.name}`)
+    console.log('navigation performed')
+    const seriesInView = location.pathname
+    console.log(seriesInView, Season.id)
+    navigate(
+      `/tv/${series_info.id}/${Season.id}`
+    )
   }
-  useEffect(()=>{
-    const seriesInView = location.pathname.split('/')[4]
-    console.log(seriesInView == Season.id);
-    if(Season.id == seriesInView){
-      console.log(Season.id);
+  useEffect(() => {
+    const seriesInView = location.pathname.split('/')[3]
+    console.log(seriesInView, Season.id)
+    if (Season.id == seriesInView) {
+      console.log(Season.id)
       setSelectedSeries(true)
-    }else{
+    } else {
       setSelectedSeries(false)
     }
-  },[Season,location.pathname])
+  }, [Season, location.pathname])
   return (
     <div
-      className={`w-[180px] mx-3 p-[15px] rounded-2xl flex flex-col items-center cursor-pointer overflow-hidden shrink-0 relative ${selectedSeries && 'border-2 border-red-700'}`}
+      className={`w-[180px] mx-3 p-[15px] rounded-2xl flex flex-col items-center cursor-pointer overflow-hidden shrink-0 relative ${
+        selectedSeries
+          ? 'border-2 border-red-700'
+          : 'border-2 border-[#ffffff46]'
+      }`}
       onClick={() => handleSeasonSelection_Navigate()}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
       <div
-        className={`w-[150px] ${!Season.poster_path && 'h-[216px]'} bg-cover rounded-lg transition-all duration-300 ease-out ${IsHovering && 'opacity-50'}`}
+        className={`w-[150px] ${
+          !Season.poster_path && 'h-[216px]'
+        } bg-cover rounded-lg transition-all duration-300 ease-out ${
+          IsHovering && 'opacity-50'
+        }`}
       >
         <img
           src={`${urls.baseUrl}${Season.poster_path}`}

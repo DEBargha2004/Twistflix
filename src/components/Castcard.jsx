@@ -7,8 +7,8 @@ function Castcard({ Item }) {
   const { setCombined_list } = useContext(MovieContext)
   const navigate = useNavigate()
   function CreateandRedirect(){
-    setCombined_list(prev => [...prev,{...Item,card_type:'cast'}])
-    navigate(`/person/${Item.id}/${Item.original_name}`)
+    setCombined_list(prev => [...prev,{...Item,card_type:'person'}])
+    navigate(`/person/${Item.id}`)
   }
   return (
     <div className='mx-3 p-2 shadow-sm shadow-[#ffffff34] h-fit rounded-xl cursor-pointer' onClick={()=>CreateandRedirect()}>
