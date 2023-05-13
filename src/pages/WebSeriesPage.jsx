@@ -1,16 +1,17 @@
 import urls from '../assets/url'
-import Percent_svg from '../components/Percent_svg'
+import Time from '../components/Time'
 import { useState, useEffect, useContext } from 'react'
 import MovieContext from '../hooks/context'
 import genre from '../functions/genre'
-import removeDup from '../functions/removeDup'
 import { useNavigate, useLocation } from 'react-router-dom'
 import seasonContext from '../hooks/seasonContext'
-import { ifIncludes } from '../functions/ifIncludes'
 import { apiKey } from '../assets/apiKey'
 import Row from '../components/Row'
 import _ from 'lodash'
 import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
+import NewCircular_svg from '../components/NewCircular_svg'
+import play from '../assets/play.png'
+import PageHeader from '../components/PageHeader'
 
 function WebSeriesPage ({ movieItem, row }) {
   const navigate = useNavigate()
@@ -22,12 +23,11 @@ function WebSeriesPage ({ movieItem, row }) {
     setSeriesCombined_list,
     setInView
   } = useContext(MovieContext)
-  const { genre_ids } = movieItem
+  const { genre_ids, genres } = movieItem
   const [similarMovies, setSimilarMovies] = useState([])
   const [genreType, setGenreType] = useState([])
   const [cast, setCast] = useState([])
   const [relatedVideos, setRelatedVideos] = useState([])
-  const [movies_In_Series, setMovies_In_Series] = useState([])
   const [scrollReset, setScrollReset] = useState(false)
   const [seriesInfo, setSeriesInfo] = useState({})
   const [selectedSeason, setSelectedSeason] = useState({ brief: {} })
@@ -47,8 +47,8 @@ function WebSeriesPage ({ movieItem, row }) {
     setSeriesInfo(response)
     setSeriesCombined_list(prev => {
       let seriesIndex = _.findIndex(prev, { id: response.id })
-      prev[seriesIndex] = { ...prev[seriesIndex], seasons: response.seasons }
-      console.log(prev[seriesIndex],seriesIndex);
+      prev[seriesIndex] = { ...response }
+      console.log(prev[seriesIndex], seriesIndex)
       return [...prev]
     })
     response = await fetch(
@@ -58,22 +58,21 @@ function WebSeriesPage ({ movieItem, row }) {
     setRelatedVideos(response.results)
     response = response.results.find(item => item.type === 'Trailer')
     setLocalTrailer(response)
+    response = await fetch(
+      `https://api.themoviedb.org/3/tv/${movieItem.id}/recommendations?api_key=${apiKey}&language=en-US&page=1`
+    )
+    response = await response.json()
+    console.log(response)
+    setSeriesCombined_list(prev => {
+      return _.uniqBy([...prev, ...response.results], 'id')
+    })
+    setSimilarMovies(response.results)
   }
 
   useEffect(() => {
-    console.log('webseries page rendered');
+    console.log('webseries page rendered')
     if (movieItem && !seriesInfo.seasons) {
       callSeriesCast_Videos()
-      let movieContainer = []
-      row.forEach(element => {
-        // for adding movies in similar series
-        if (!element.card_type) {
-          if (ifIncludes(genre_ids, element)) {
-            movieContainer.push(element)
-          }
-        }
-      })
-      setSimilarMovies(removeDup(movieContainer, movieItem))
       setScrollReset(true)
       setTimeout(() => {
         document.querySelector('html').scrollTo({
@@ -85,7 +84,7 @@ function WebSeriesPage ({ movieItem, row }) {
   }, [])
   useEffect(() => {
     setGenreType([])
-    genre(genre_ids, setGenreType, seriesGenres)
+    genre(genre_ids || genres, setGenreType, seriesGenres)
     location.pathname.includes('/tv') && setInView(1)
   }, [])
   useEffect(() => {
@@ -96,48 +95,19 @@ function WebSeriesPage ({ movieItem, row }) {
   return (
     <>
       <seasonContext.Provider value={{ selectedSeason, setSelectedSeason }}>
-        <div className='flex justify-around m-10 mt-[100px]'>
-          <div className='flex-1 flex justify-center'>
-            <div className='w-[400px] overflow-hidden rounded-lg'>
-              <img
-                src={`${urls.baseUrl}${movieItem.poster_path}`}
-                className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70 hover:bg-[#00000070]'
-                alt=''
-              />
-            </div>
-          </div>
-          <div className='flex-1'>
-            <p className='text-white text-[50px] font-bold mb-10'>
-              {movieItem.original_name}
-            </p>
-            <p className='text-white w-[80%]'>{movieItem.overview}</p>
-            <p className='mt-10'>
-              {genreType.map((item, index) => (
-                <span
-                  key={index}
-                  className='text-white mr-2 text-lg font-semibold'
-                >
-                  {item}
-                </span>
-              ))}
-            </p>
-            <p className='mt-5 text-white text-lg'>
-              {`Release Date - `}
-              <span className='font-semibold'>
-                {movieItem.release_date || movieItem.first_air_date}
-              </span>
-            </p>
-            <Percent_svg percentage={percentage} />
-            <button
-              className='bg-white mr-2 mt-12 text-lg uppercase px-5 py-2 font-semibold rounded-md transition-all hover:bg-[#ffffffaf]'
-              onClick={() =>
-                handleGlobalPlayer({ setGlobalTrailer, navigate, localTrailer })
-              }
-            >
-              Play
-            </button>
-          </div>
-        </div>
+        <PageHeader
+          backdrop_img={movieItem.backdrop_path}
+          main_img={movieItem.poster_path}
+          genres={seriesInfo.genres}
+          name={movieItem.name}
+          overview={seriesInfo.overview}
+          percentage={percentage}
+          release_date={seriesInfo.first_air_date}
+          runtime={seriesInfo.episode_run_time}
+          tagline={seriesInfo.tagline}
+          localTrailer={localTrailer}
+          setGlobalTrailer={setGlobalTrailer}
+        />
         <div>
           <Row
             type='season'
@@ -154,18 +124,18 @@ function WebSeriesPage ({ movieItem, row }) {
             include_margin
             {...scroller}
           />
-          {/* <Row
+          <Row
             type='scaled_both'
             List={relatedVideos}
             title='Related Videos'
             include_margin
             {...scroller}
-          /> */}
+          />
           <Row
             type='long_horizontal'
             content_type='series'
             List={similarMovies}
-            title='Similar Web Series'
+            title='Recommendations'
             include_margin
             {...scroller}
           />

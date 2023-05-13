@@ -26,17 +26,17 @@ function EpisodeCard ({ Item: Episode, series_info, season_info }) {
   }, [location.pathname])
   return (
     <div
-      className={`w-[250px] mx-3 py-2 rounded-2xl flex flex-col items-center cursor-pointer relative shadow-lg shadow-[#ffffff1c] overflow-hidden shrink-0 ${
-        IsSelected && 'border-2 border-red-700'
+      className={`w-[250px] py-3 mx-3 rounded-2xl flex flex-col items-center justify-center cursor-pointer relative shadow-lg shadow-[#ffffff1c] overflow-hidden shrink-0 ${
+        IsSelected && 'border-[3px] border-red-700 scale-90'
       }`}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onClick={() => handleNavigate()}
     >
       <div
-        className={`w-[230px] ${
+        className={`w-[220px] ${
           Episode.still_path ? 'h-auto' : 'h-[129.375px]'
-        } border-[1px] border-[#ffffff56] bg-cover rounded-lg overflow-hidden transition-all duration-300 ease-out`}
+        } border-[1px] border-[#ffffff56] bg-cover rounded-xl overflow-hidden transition-all duration-300 ease-out`}
       >
         <img
           src={`${urls.baseUrl}${Episode.still_path}`}

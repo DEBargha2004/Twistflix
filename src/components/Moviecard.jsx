@@ -7,6 +7,7 @@ import fullscreen from '../assets/full-screen.png'
 import { useNavigate, useLocation } from 'react-router-dom'
 import genre from '../functions/genre'
 import { motion } from 'framer-motion'
+import NewCircular_svg from './NewCircular_svg'
 
 function Card ({ Item: movieItem, type, content_type }) {
   const { genres, seriesGenres } = useContext(MovieContext)
@@ -23,7 +24,8 @@ function Card ({ Item: movieItem, type, content_type }) {
   const location = useLocation()
 
   function handleNavigate () {
-    const movieRoute = `/tv/${movieItem.id}`
+    const movieRoute =
+      content_type === 'series' ? `/tv/${movieItem.id}` : `/${movieItem.id}`
     navigate(movieRoute)
   }
   function genreTypeSetter (content_type) {
@@ -155,12 +157,19 @@ function Card ({ Item: movieItem, type, content_type }) {
                 : 'top']: `${cardPosition.y}px`
             }}
           >
-            <div className='w-[250px] overflow-hidden rounded-md'>
-              <img
-                src={`${urls.baseUrl}${movieItem.backdrop_path}`}
-                alt={movieItem.original_title || movieItem.name}
-                className='w-[250px] transition-all hover:scale-105 duration-[600ms] hover:opacity-70 hover:bg-[#00000091]'
-              />
+            <div className='relative w-fit h-fit'>
+              <div className='w-[250px] overflow-hidden rounded-md'>
+                <img
+                  src={`${urls.baseUrl}${movieItem.backdrop_path}`}
+                  alt={movieItem.title || movieItem.name}
+                  className='w-[250px] transition-all hover:scale-105 duration-[600ms] hover:opacity-70 hover:bg-[#00000091]'
+                />
+              </div>
+              <div className='absolute right-0 bottom-[-40px] scale-75'>
+                <NewCircular_svg
+                  percentage={Math.floor(movieItem.vote_average * 10)}
+                />
+              </div>
             </div>
             <div className='mt-3 flex items-center w-[250px]'>
               <img
@@ -182,7 +191,7 @@ function Card ({ Item: movieItem, type, content_type }) {
             </div>
             <div className='w-[250px] mt-2'>
               <p className='text-white  text-lg font-semibold'>
-                {movieItem.original_title || movieItem.original_name}
+                {movieItem.title || movieItem.name}
               </p>
               <p className='text-sm h-[100px] overflow-clip text-slate-300  text-[13px]'>
                 {movieItem.overview}

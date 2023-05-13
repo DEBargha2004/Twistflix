@@ -4,16 +4,15 @@ import Row from '../components/Row'
 import { useState, useEffect, useContext } from 'react'
 import MovieContext from '../hooks/context'
 import genre from '../functions/genre'
-import removeDup from '../functions/removeDup'
-import { useNavigate,useLocation } from 'react-router-dom'
-import Percent_svg from '../components/Percent_svg'
+import NewCircular_svg from '../components/NewCircular_svg'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
 import { addIf_DoesNot_Exist } from '../functions/addIf_DoesNot_Exist'
 import { callCast_Videos } from '../functions/callCast_Videos'
-import { ifIncludes } from '../functions/ifIncludes'
 import _ from 'lodash'
+import PageHeader from '../components/PageHeader'
 
-function MoviePage ({ movieItem, row }) {
+function MoviePage ({ movieItem }) {
   const navigate = useNavigate()
   const location = useLocation()
   const { genre_ids } = movieItem
@@ -22,6 +21,7 @@ function MoviePage ({ movieItem, row }) {
   const [cast, setCast] = useState([])
   const [relatedVideos, setRelatedVideos] = useState([])
   const [movies_In_Series, setMovies_In_Series] = useState([])
+  const [moreInfo, setMoreInfo] = useState({})
   const [scrollReset, setScrollReset] = useState(false)
   const {
     genres,
@@ -53,17 +53,10 @@ function MoviePage ({ movieItem, row }) {
         combined_list,
         setCombined_list,
         collection,
-        setCollection
+        setCollection,
+        setSimilarMovies,
+        setMoreInfo
       })
-      let movieContainer = []
-      row.forEach(element => {
-        if (!element.card_type) {
-          if (ifIncludes(genre_ids, element)) {
-            movieContainer.push(element)
-          }
-        }
-      })
-      setSimilarMovies(removeDup(movieContainer, movieItem))
       setScrollReset(true)
       setTimeout(() => {
         document.querySelector('html').scrollTo({
@@ -77,56 +70,29 @@ function MoviePage ({ movieItem, row }) {
     setGenreType([])
     genre(genre_ids, setGenreType, genres)
   }, [])
-  useEffect(()=>{
-    if(location.pathname.includes('/tv')){
+  useEffect(() => {
+    if (location.pathname.includes('/tv')) {
       setInView(1)
-    }else{
+    } else {
       setInView(0)
     }
-  },[location.pathname])
+  }, [location.pathname])
 
   return (
     <>
-      <div className='flex justify-around m-10 mt-[100px]' ref={MoviePageRef}>
-        <div className='flex-1 flex justify-center'>
-          <div className='w-[400px] overflow-hidden rounded-lg'>
-            <img
-              src={`${urls.baseUrl}${movieItem.poster_path}`}
-              className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70 hover:bg-[#00000070]'
-              alt=''
-            />
-          </div>
-        </div>
-        <div className='flex-1'>
-          <p className='text-white text-[50px] font-bold mb-10'>
-            {movieItem.original_title}
-          </p>
-          <p className='text-white w-[80%]'>{movieItem.overview}</p>
-          <p className='mt-10'>
-            {genreType.map((item, index) => (
-              <span
-                key={index}
-                className='text-white mr-2 text-lg font-semibold'
-              >
-                {item}
-              </span>
-            ))}
-          </p>
-          <p className='mt-5 text-white text-lg'>
-            {`Release Date - `}
-            <span className='font-semibold'>{movieItem.release_date}</span>
-          </p>
-          <Percent_svg percentage={percentage} />
-          <button
-            className='bg-white mr-2 mt-12 text-lg uppercase px-5 py-2 font-semibold rounded-md transition-all hover:bg-[#ffffffaf]'
-            onClick={() =>
-              handleGlobalPlayer({ setGlobalTrailer, navigate, localTrailer })
-            }
-          >
-            Play
-          </button>
-        </div>
-      </div>
+      <PageHeader 
+        main_img={movieItem.poster_path}
+        backdrop_img={movieItem.backdrop_path}
+        genres={moreInfo.genres}
+        localTrailer={localTrailer}
+        name={movieItem.title}
+        overview={movieItem.overview}
+        percentage={percentage}
+        release_date={moreInfo.release_date}
+        runtime={moreInfo.runtime}
+        setGlobalTrailer={setGlobalTrailer}
+        tagline={moreInfo.tagline}
+      />
       <div>
         <Row
           type='long_vertical'
@@ -137,7 +103,7 @@ function MoviePage ({ movieItem, row }) {
         />
         <Row
           type='long_horizontal'
-          List={_.uniqBy(movies_In_Series,'id')}
+          List={_.uniqBy(movies_In_Series, 'id')}
           title='Movies in series'
           include_margin
           {...scroller}
@@ -153,7 +119,7 @@ function MoviePage ({ movieItem, row }) {
           type='long_horizontal'
           content_type='movie'
           List={similarMovies}
-          title='Similar Movies'
+          title='Recommendations'
           include_margin
           {...scroller}
         />

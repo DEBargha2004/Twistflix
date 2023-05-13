@@ -2,12 +2,11 @@ import Row from '../components/Row'
 import { useContext, useEffect } from 'react'
 import MovieContext from '../hooks/context'
 import Hero from '../components/Hero'
-import { useLocation } from 'react-router-dom'
 
 function WebSeriesPage () {
-  const { seriesGenres,setIndex } = useContext(MovieContext)
+  const { seriesGenres,setInView } = useContext(MovieContext)
   useEffect(()=>{
-    location.pathname.includes('/tv') && setIndex(1)
+    location.pathname.includes('/tv') && setInView(1)
   },[])
   return (
     <div>

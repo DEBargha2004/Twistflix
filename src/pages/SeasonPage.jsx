@@ -9,12 +9,13 @@ import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
 import genre from '../functions/genre'
 import _ from 'lodash'
 import { similar } from '../functions/similar'
+import PageHeader from '../components/PageHeader'
 
 function SeasonPage ({ season, series, seriesGenres }) {
   const navigate = useNavigate()
   const { setSeriesCombined_list, seriesCombined_list, setGlobalTrailer } =
     useContext(MovieContext)
-  const [seasonInfo, setSeasonInfo] = useState(null)
+  const [seasonInfo, setSeasonInfo] = useState({})
   const [cast, setCast] = useState([])
   const [localTrailer, setLocalTrailer] = useState(null)
   const [relatedVideos, setRelatedVideos] = useState([])
@@ -49,6 +50,11 @@ function SeasonPage ({ season, series, seriesGenres }) {
     setRelatedVideos(response.results)
     response = response.results.find(item => item.type === 'Trailer')
     setLocalTrailer(response)
+    response = await fetch(
+      `https://api.themoviedb.org/3/tv/${series.id}/recommendations?api_key=${apiKey}&language=en-US&page=1`
+    )
+    response = await response.json()
+    setSimilarSeries(response.results)
   }
 
   useEffect(() => {
@@ -64,58 +70,24 @@ function SeasonPage ({ season, series, seriesGenres }) {
   useEffect(() => {
     setScrollReset(true)
   }, [season])
-  useEffect(() => {
-    if (!genreType.length) {
-      genre(series.genre_ids, setGenreType, seriesGenres)
-    }
-  }, [seriesGenres, series])
 
   return (
     <>
-      <div className='flex justify-around m-10 mt-[100px]'>
-        <div className='flex-1 flex justify-center'>
-          <div className='w-[400px] h-fit overflow-hidden rounded-lg'>
-            <img
-              src={`${urls.baseUrl}${seasonInfo?.poster_path}`}
-              className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70 hover:bg-[#00000070]'
-              alt=''
-            />
-          </div>
-        </div>
-        <div className='flex-1'>
-          <p className='text-white text-[50px] font-bold mb-2'>{series.name}</p>
-          <p className='text-xl font-bold text-slate-400 mb-2'>
-            {seasonInfo?.name}
-          </p>
-          <p className='text-slate-400 font-semibold mb-10'>
-            {season.episode_count} episodes
-          </p>
-          <p className='text-white w-[80%]'>{seasonInfo?.overview}</p>
-          <p className='mt-10'>
-            {genreType.map((item, index) => (
-              <span
-                key={index}
-                className='text-white mr-2 text-lg font-semibold'
-              >
-                {item}
-              </span>
-            ))}
-          </p>
-          <p className='mt-5 text-white text-lg'>
-            {`Release Date - `}
-            <span className='font-semibold'>{seasonInfo?.air_date}</span>
-          </p>
-          <Percent_svg percentage={Math.round(series.vote_average * 10)} />
-          <button
-            className='bg-white mr-2 mt-12 text-lg uppercase px-5 py-2 font-semibold rounded-md transition-all hover:bg-[#ffffffaf]'
-            onClick={() =>
-              handleGlobalPlayer({ setGlobalTrailer, navigate, localTrailer })
-            }
-          >
-            Play
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        backdrop_img={series.backdrop_path}
+        main_img={series.poster_path}
+        genres={series.genres}
+        localTrailer={localTrailer}
+        name={series.name}
+        overview={seasonInfo.overview}
+        percentage={Math.floor(series.vote_average * 10)}
+        release_date={season.air_date}
+        runtime={series.episode_run_time}
+        setGlobalTrailer={setGlobalTrailer}
+        tagline={series.tagline}
+        episode_count={season.episode_count}
+        season_name={season.name}
+      />
       <div>
         <Row
           type='episode'
@@ -150,7 +122,7 @@ function SeasonPage ({ season, series, seriesGenres }) {
         />
         <Row
           type='long_horizontal'
-          title='Similar web series'
+          title='Recommendations'
           content_type='series'
           List={similarSeries}
           include_margin

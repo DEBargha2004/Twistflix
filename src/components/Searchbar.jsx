@@ -44,17 +44,23 @@ function Searchbar () {
     setSearchList(response.results)
   }
   function setMovieRoute (item) {
+    console.log(item)
     console.log(parentPath)
-    parentPath !== 'tv'
-      ? parentPath === 'person' ? 
-      setCombined_list(addIf_DoesNot_Exist([{...item,card_type:'person'}], combined_list)):
-      setCombined_list(addIf_DoesNot_Exist([item], combined_list))
+    item.title || item.known_for
+      ? item.known_for
+        ? setCombined_list(
+            addIf_DoesNot_Exist(
+              [{ ...item, card_type: 'person' }],
+              combined_list
+            )
+          )
+        : setCombined_list(addIf_DoesNot_Exist([item], combined_list))
       : setSeriesCombined_list(prev => combineSeries(prev, [item]))
-    parentPath === 'movie'
-      ? navigate(`/${item.id}`)
-      : navigate(
-          `/${parentPath}/${item.id}`
-        )
+    item.title || item.known_for
+      ? item.known_for
+        ? navigate(`/person/${item.id}`)
+        : navigate(`/movie/${item.id}`)
+      : navigate(`/tv/${item.id}`)
     setIsFocused(false)
   }
   useEffect(() => {
@@ -104,8 +110,10 @@ function Searchbar () {
   useEffect(() => {
     const relative = location.pathname.split('/')[1]
     if (relative === 'tv' || relative === 'person') {
+      parentPath !== relative && setSearchList([])
       setParentPath(relative)
     } else {
+      parentPath !== relative && setSearchList([])
       setParentPath('movie')
     }
   }, [location.pathname])
@@ -156,12 +164,14 @@ function Searchbar () {
               onClick={() => setMovieRoute(item)}
             >
               <img
-                src={`${urls.baseUrl}${item.backdrop_path || item.profile_path}`}
+                src={`${urls.baseUrl}${
+                  item.backdrop_path || item.profile_path
+                }`}
                 className='w-8 mr-3 rounded-sm'
                 alt=''
               />
               <p className='text-white text-lg truncate '>
-                {item.original_title || item.original_name}
+                {item.title || item.name}
               </p>
             </div>
           ))}
