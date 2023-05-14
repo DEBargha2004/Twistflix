@@ -16,15 +16,12 @@ function CallNewCard ({ id }) {
   }
 
   async function callNewMovies () {
-    console.log(genres)
     let response = await fetcher(id, genres[index].currentPage + 1,'movies')
     setCombined_list(addIf_DoesNot_Exist(response, combined_list)) // adding in the combined_list and setting routes
     setGenres(prev => {
-      console.log(index)
       if (!isNaN(index)) {
         prev[index].movieList = [...prev[index].movieList, ...response]
         prev[index].currentPage += 1
-        console.log(prev)
         return [...prev]
       }
       return [...prev]

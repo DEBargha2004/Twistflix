@@ -40,12 +40,9 @@ function Searchbar () {
   async function callQuery () {
     let response = await fetch(urls.queryUrl(parentPath, query))
     response = await response.json()
-    console.log(response)
     setSearchList(response.results)
   }
   function setMovieRoute (item) {
-    console.log(item)
-    console.log(parentPath)
     item.title || item.known_for
       ? item.known_for
         ? setCombined_list(
@@ -102,7 +99,6 @@ function Searchbar () {
     return () =>
       window.removeEventListener('click', e => {
         if (bool) {
-          console.log('not focused')
           setIsFocused(false)
         }
       })

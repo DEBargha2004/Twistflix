@@ -28,7 +28,6 @@ function SeasonPage ({ season, series, seriesGenres }) {
       `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}?api_key=${apiKey}&language=en-US`
     )
     response = await response.json()
-    console.log(response)
     setSeriesCombined_list(prev => {
       let seriesIndex = _.findIndex(seriesCombined_list, { id: series.id })
       let seasonIndex = _.findIndex(seriesCombined_list[seriesIndex].seasons, {
@@ -58,7 +57,6 @@ function SeasonPage ({ season, series, seriesGenres }) {
   }
 
   useEffect(() => {
-    console.log('season page rendered')
     callEpisode_Info()
     setSimilarSeries(similar(series, seriesCombined_list))
     document.querySelector('html').scrollTo({
@@ -75,7 +73,7 @@ function SeasonPage ({ season, series, seriesGenres }) {
     <>
       <PageHeader
         backdrop_img={series.backdrop_path}
-        main_img={series.poster_path}
+        main_img={season.poster_path}
         genres={series.genres}
         localTrailer={localTrailer}
         name={series.name}
@@ -100,7 +98,7 @@ function SeasonPage ({ season, series, seriesGenres }) {
         />
         <Row
           type='season'
-          title='Season'
+          title='Seasons'
           List={series.seasons}
           series_info={series}
           include_margin

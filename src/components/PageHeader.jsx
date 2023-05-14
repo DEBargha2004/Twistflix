@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect, useRef } from 'react'
 import Time from './Time'
 import urls from '../assets/url'
 import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
@@ -25,11 +25,16 @@ function PageHeader ({
   episode
 }) {
   const navigate = useNavigate()
+  const backdrop = useRef(null)
   return (
-    <div className='relative my-20 overflow-y-hidden bg-[#00000060]'>
+    <div className='relative my-20 overflow-y-hidden'>
       <div className='flex justify-around py-10 mt-[20px]'>
         <div className='flex flex-col justify-around items-center'>
-          <div className={`w-[300px] overflow-hidden rounded-lg h-fit bg-black ${episode ? 'mx-[100px]' : 'ml-[100px]'}`}>
+          <div
+            className={`w-[300px] overflow-hidden rounded-lg h-fit bg-black ${
+              episode ? 'mx-[100px]' : 'ml-[100px]'
+            }`}
+          >
             <img
               src={`${urls.baseUrl}${main_img}`}
               className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70'
@@ -38,12 +43,12 @@ function PageHeader ({
           </div>
           <p className='text-xl font-semibold text-slate-300'>{episode_name}</p>
         </div>
-        <div className=' flex flex-col justify-center items-start mr-20 ml-10'>
+        <div className={`flex flex-col justify-center items-start mr-20 ${!episode && 'ml-10'}`}>
           <p className='text-white text-4xl font-bold mb-1'>
             {name}
             <span className='font-normal text-slate-300'>
               {' '}
-              ({release_date?.split('-')[0]})
+              {release_date? `(${release_date.split('-')[0]})` : '(Upcoming)'}
             </span>
           </p>
           <p className='text-slate-300'>
@@ -93,18 +98,19 @@ function PageHeader ({
               <p className='text-slate-300'>{episode_count} episodes</p>
             ) : null}
           </div>
-          <i className='text-gray-300'>{tagline}</i>
+          <i className='text-gray-300 my-2'>{tagline}</i>
           <div>
             <p className='text-lg font-semibold my-2 text-white'>Overview</p>
             <p className='text-white text-[15px] w-[844px]'>{overview}</p>
           </div>
         </div>
       </div>
-      <div className='absolute w-full h-full opacity-20 z-[-1] top-0'>
+      <div className='absolute w-full h-full opacity-30 z-[-1] top-0'>
         <img
           src={`${urls.baseUrl}${backdrop_img}`}
           className='w-full h-full object-cover'
           alt=''
+          ref={backdrop}
         />
       </div>
     </div>

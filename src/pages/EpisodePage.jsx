@@ -21,19 +21,16 @@ function EpisodePage ({ season, series, episode, seriesGenres }) {
   const scroller = { scrollReset, setScrollReset }
 
   async function callCast_Videos () {
-    console.log(series, season, episode)
     let response = await fetch(
       `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}/episode/${episode.episode_number}/credits?api_key=${apiKey}&language=en-US`
     )
     response = await response.json()
-    console.log(response)
     setCast([...response.cast, ...response.crew, ...response.guest_stars])
     response = await fetch(
       `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}/episode/${episode.episode_number}/videos?api_key=${apiKey}&language=en-US`
     )
     response = await response.json()
     setRelatedVideos(response.results)
-    console.log(response);
     response = response.results.find(item => item.type === 'Trailer')
     setLocalTrailer(response)
     response = await fetch(`https://api.themoviedb.org/3/tv/${series.id}/recommendations?api_key=${apiKey}&language=en-US`)
@@ -43,7 +40,6 @@ function EpisodePage ({ season, series, episode, seriesGenres }) {
 
   useEffect(() => {
     callCast_Videos()
-    console.log('this');
     document.querySelector('html').scrollTo({
       top: 0,
       behavior: 'smooth'
@@ -70,7 +66,7 @@ function EpisodePage ({ season, series, episode, seriesGenres }) {
         runtime={episode.runtime}
         season_name={season.name}
         setGlobalTrailer={setGlobalTrailer}
-        tagline={episode.tagline}
+        tagline={series.tagline}
         episode_number={episode.episode_number}
         episode_name={episode.name}
         episode
@@ -87,7 +83,7 @@ function EpisodePage ({ season, series, episode, seriesGenres }) {
         />
         <Row
           type='season'
-          title='Season'
+          title='Seasons'
           List={series.seasons}
           series_info={series}
           include_margin

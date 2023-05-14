@@ -33,7 +33,6 @@ function CastPage ({ Cast }) {
     )
     response = await response.json()
     setCurrentCastSeries([...response.cast, ...response.crew])
-    console.log(response)
     setSeriesCombined_list(prev => {
       return combineSeries(prev, [...response.cast, ...response.crew])
     })

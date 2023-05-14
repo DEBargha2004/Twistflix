@@ -7,7 +7,7 @@ const urls = {
     if (type === 'movies') {
       return `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&with_genres=${id}&page=${page}`
     } else if (type === 'series') {
-      return `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&with_genres=${id}&page=${page}`
+      return `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&language=en-US&with_genres=${id}&page=${page}`
     }
   },
   baseUrl: 'https://image.tmdb.org/t/p/original',

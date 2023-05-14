@@ -31,7 +31,6 @@ export async function callCast_Videos ({
   )
   response = await response.json()
   setMoreInfo(response)
-  console.log(response)
   let collection_id = response.belongs_to_collection?.id
   if (collection_id) {
     if (!collection[collection_id]) {
@@ -49,7 +48,6 @@ export async function callCast_Videos ({
       )
     }
   }
-  console.log('this is reached')
   response = await fetch(
     `https://api.themoviedb.org/3/movie/${movieItem.id}/recommendations?api_key=${apiKey}&language=en-US&page=1`
   )
@@ -57,6 +55,5 @@ export async function callCast_Videos ({
   setCombined_list(prev => {
     return _.uniqBy([...prev, ...response.results], 'id')
   })
-  console.log(response.results)
   setSimilarMovies([...response.results])
 }

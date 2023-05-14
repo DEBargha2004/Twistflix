@@ -113,7 +113,6 @@ function App () {
       setRoutes([...combined_list])
       localStorage.setItem('saved_movies', JSON.stringify(combined_list))
     }
-    console.log(combined_list.length)
   }, [combined_list])
 
   useEffect(() => {

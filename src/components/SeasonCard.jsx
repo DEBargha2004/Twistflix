@@ -9,18 +9,14 @@ function SeasonCard ({ Item: Season, series_info }) {
   const [selectedSeries, setSelectedSeries] = useState(false)
 
   function handleSeasonSelection_Navigate () {
-    console.log('navigation performed')
     const seriesInView = location.pathname
-    console.log(seriesInView, Season.id)
     navigate(
       `/tv/${series_info.id}/${Season.id}`
     )
   }
   useEffect(() => {
     const seriesInView = location.pathname.split('/')[3]
-    console.log(seriesInView, Season.id)
     if (Season.id == seriesInView) {
-      console.log(Season.id)
       setSelectedSeries(true)
     } else {
       setSelectedSeries(false)
@@ -31,7 +27,7 @@ function SeasonCard ({ Item: Season, series_info }) {
       className={`w-[180px] mx-3 p-[15px] rounded-2xl flex flex-col items-center cursor-pointer overflow-hidden shrink-0 relative ${
         selectedSeries
           ? 'border-2 border-red-700'
-          : 'border-2 border-[#ffffff46]'
+          : 'border-2 border-[#ffffff1f]'
       }`}
       onClick={() => handleSeasonSelection_Navigate()}
       onMouseEnter={() => setIsHovering(true)}

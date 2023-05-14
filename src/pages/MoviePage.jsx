@@ -41,7 +41,6 @@ function MoviePage ({ movieItem }) {
 
   useEffect(() => {
     if (movieItem) {
-      console.log('this is movieItem', movieItem)
       callCast_Videos({
         movieItem,
         setCast,

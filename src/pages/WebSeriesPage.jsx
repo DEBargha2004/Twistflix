@@ -48,7 +48,6 @@ function WebSeriesPage ({ movieItem, row }) {
     setSeriesCombined_list(prev => {
       let seriesIndex = _.findIndex(prev, { id: response.id })
       prev[seriesIndex] = { ...response }
-      console.log(prev[seriesIndex], seriesIndex)
       return [...prev]
     })
     response = await fetch(
@@ -62,7 +61,6 @@ function WebSeriesPage ({ movieItem, row }) {
       `https://api.themoviedb.org/3/tv/${movieItem.id}/recommendations?api_key=${apiKey}&language=en-US&page=1`
     )
     response = await response.json()
-    console.log(response)
     setSeriesCombined_list(prev => {
       return _.uniqBy([...prev, ...response.results], 'id')
     })
@@ -70,7 +68,6 @@ function WebSeriesPage ({ movieItem, row }) {
   }
 
   useEffect(() => {
-    console.log('webseries page rendered')
     if (movieItem && !seriesInfo.seasons) {
       callSeriesCast_Videos()
       setScrollReset(true)
@@ -87,11 +84,7 @@ function WebSeriesPage ({ movieItem, row }) {
     genre(genre_ids || genres, setGenreType, seriesGenres)
     location.pathname.includes('/tv') && setInView(1)
   }, [])
-  useEffect(() => {
-    if (selectedSeason.brief.id) {
-      console.log(selectedSeason.brief)
-    }
-  }, [selectedSeason])
+
   return (
     <>
       <seasonContext.Provider value={{ selectedSeason, setSelectedSeason }}>
