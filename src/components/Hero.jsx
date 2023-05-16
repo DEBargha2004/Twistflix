@@ -41,7 +41,7 @@ function Hero () {
         />
         <div className='absolute left-[50px] top-[50%]'>
           <p className='font-semibold text-white text-[50px] line-clamp-1'>
-            {hero[Index]?.original_title}
+            {hero[Index]?.title}
           </p>
           <p className='text-white text-sm line-clamp-5 w-[400px]'>
             {hero[Index]?.overview}
@@ -109,7 +109,7 @@ function Hero () {
         />
         <div className='absolute left-[50px] top-[50%]'>
           <p className='font-semibold text-white text-[50px] line-clamp-1'>
-            {seriesHero[seriesIndex]?.original_name}
+            {seriesHero[seriesIndex]?.name}
           </p>
           <p className='text-white text-sm line-clamp-5 w-[400px]'>
             {seriesHero[seriesIndex]?.overview}

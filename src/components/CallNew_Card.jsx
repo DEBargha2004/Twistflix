@@ -4,29 +4,43 @@ import MovieContext from '../hooks/context'
 import { useContext } from 'react'
 import { addIf_DoesNot_Exist } from '../functions/addIf_DoesNot_Exist'
 
-function CallNewCard ({ id }) {
-  const { setGenres, setCombined_list, combined_list, genres } =
-    useContext(MovieContext)
+function CallNewCard ({ id, content_type }) {
+  const {
+    setGenres,
+    setCombined_list,
+    combined_list,
+    genres,
+    setSeriesGenres,
+    seriesGenres
+  } = useContext(MovieContext)
 
-  let index
-  for (let i = 0; i < genres.length; i++) {
-    if (genres[i].id === id) {
-      index = i
-    }
-  }
-
+  let movie = genres.find(item => item.id === id)
+  let series = seriesGenres.find(item => item.id === id)
   async function callNewMovies () {
-    let response = await fetcher(id, genres[index].currentPage + 1,'movies')
-    setCombined_list(addIf_DoesNot_Exist(response, combined_list)) // adding in the combined_list and setting routes
-    setGenres(prev => {
-      if (!isNaN(index)) {
-        prev[index].movieList = [...prev[index].movieList, ...response]
-        prev[index].currentPage += 1
-        return [...prev]
-      }
-      return [...prev]
-    })
-    setPage(prev => prev + 1)
+    let response = await fetcher(
+      id,
+      content_type === 'movies' ? movie.currentPage + 1 : series.currentPage + 1,
+      content_type
+    )
+  
+    content_type === 'movies'
+      ? setGenres(prev => {
+          if (movie) {
+            movie = prev.find(item => item.id === id)
+            movie.movieList = [...movie.movieList, ...response]
+            movie.currentPage += 1
+            return [...prev]
+          }
+          return [...prev]
+        })
+      : setSeriesGenres(prev => {
+          if (series) {
+            series = prev.find(item => item.id === id)
+            series.movieList = [...series.movieList, ...response]
+            series.currentPage += 1
+            return [...prev]
+          }
+        })
   }
   return (
     <div className='w-[250px] h-[141px] bg-slate-500 shrink-0 rounded-lg flex items-center justify-center cursor-pointer'>

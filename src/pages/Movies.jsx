@@ -18,7 +18,7 @@ function Home () {
                   type='long_horizontal'
                   List={item.movieList}
                   id={item.id}
-                  content_type='movie'
+                  content_type='movies'
                 />
               ) : null}
             </div>

@@ -191,6 +191,7 @@ function App () {
         inView,
         setInView,
         seriesGenres,
+        setSeriesGenres,
         seriesCombined_list,
         setSeriesCombined_list,
         seriesRandomArray,

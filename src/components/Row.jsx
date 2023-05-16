@@ -53,7 +53,7 @@ function Row ({
                 />
               )
             })}
-        {id && <CallNew_Card id={id} />}
+        {id && <CallNew_Card id={id} content_type={content_type} />}
       </div>
       <div
         className={`h-[calc(100%-40px)] bg-[#00000091] w-10 absolute flex justify-center items-center left-[-16px] ${
