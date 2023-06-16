@@ -18,18 +18,18 @@ function CastPage ({ Cast }) {
   const [seeFull, setseeFull] = useState(false)
   async function callSpecificCast () {
     let response = await fetch(
-      `https://api.themoviedb.org/3/person/${Cast.id}?api_key=${apiKey}`
+      `https://api.themoviedb.org/3/person/${Cast.id}?api_key=${process.env.NODE_ENV.apiKey || apiKey}`
     )
     response = await response.json()
     setCurrentCast(response)
     response = await fetch(
-      `https://api.themoviedb.org/3/person/${Cast.id}/movie_credits?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/person/${Cast.id}/movie_credits?api_key=${process.env.NODE_ENV.apiKey || apiKey}&language=en-US`
     )
     response = await response.json()
     setCombined_list(prev => [...prev, ...response.cast, ...response.crew])
     setCurrentCastMovies([...response.cast, ...response.crew])
     response = await fetch(
-      `https://api.themoviedb.org/3/person/${Cast.id}/tv_credits?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/person/${Cast.id}/tv_credits?api_key=${process.env.NODE_ENV.apiKey || apiKey}&language=en-US`
     )
     response = await response.json()
     setCurrentCastSeries([...response.cast, ...response.crew])

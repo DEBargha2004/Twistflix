@@ -22,18 +22,30 @@ function EpisodePage ({ season, series, episode, seriesGenres }) {
 
   async function callCast_Videos () {
     let response = await fetch(
-      `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}/episode/${episode.episode_number}/credits?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${series.id}/season/${
+        season.season_number
+      }/episode/${episode.episode_number}/credits?api_key=${
+        process.env.NODE_ENV.apiKey || apiKey
+      }&language=en-US`
     )
     response = await response.json()
     setCast([...response.cast, ...response.crew, ...response.guest_stars])
     response = await fetch(
-      `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}/episode/${episode.episode_number}/videos?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${series.id}/season/${
+        season.season_number
+      }/episode/${episode.episode_number}/videos?api_key=${
+        process.env.NODE_ENV.apiKey || apiKey
+      }&language=en-US`
     )
     response = await response.json()
     setRelatedVideos(response.results)
     response = response.results.find(item => item.type === 'Trailer')
     setLocalTrailer(response)
-    response = await fetch(`https://api.themoviedb.org/3/tv/${series.id}/recommendations?api_key=${apiKey}&language=en-US`)
+    response = await fetch(
+      `https://api.themoviedb.org/3/tv/${series.id}/recommendations?api_key=${
+        process.env.NODE_ENV.apiKey || apiKey
+      }&language=en-US`
+    )
     response = await response.json()
     setRecommendations(response.results)
   }

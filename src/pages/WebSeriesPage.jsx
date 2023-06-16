@@ -36,12 +36,16 @@ function WebSeriesPage ({ movieItem, row }) {
   const scroller = { scrollReset, setScrollReset }
   async function callSeriesCast_Videos () {
     let response = await fetch(
-      `https://api.themoviedb.org/3/tv/${movieItem.id}/credits?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${movieItem.id}/credits?api_key=${
+        process.env.NODE_ENV.apiKey || apiKey
+      }&language=en-US`
     )
     response = await response.json()
     setCast([...response.cast, ...response.crew])
     response = await fetch(
-      `https://api.themoviedb.org/3/tv/${movieItem.id}?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${movieItem.id}?api_key=${
+        process.env.NODE_ENV.apiKey || apiKey
+      }&language=en-US`
     )
     response = await response.json()
     setSeriesInfo(response)
@@ -51,14 +55,20 @@ function WebSeriesPage ({ movieItem, row }) {
       return [...prev]
     })
     response = await fetch(
-      `https://api.themoviedb.org/3/tv/${movieItem.id}/videos?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${movieItem.id}/videos?api_key=${
+        process.env.NODE_ENV.apiKey || apiKey
+      }&language=en-US`
     )
     response = await response.json()
     setRelatedVideos(response.results)
     response = response.results.find(item => item.type === 'Trailer')
     setLocalTrailer(response)
     response = await fetch(
-      `https://api.themoviedb.org/3/tv/${movieItem.id}/recommendations?api_key=${apiKey}&language=en-US&page=1`
+      `https://api.themoviedb.org/3/tv/${
+        movieItem.id
+      }/recommendations?api_key=${
+        process.env.NODE_ENV.apiKey || apiKey
+      }&language=en-US&page=1`
     )
     response = await response.json()
     setSeriesCombined_list(prev => {

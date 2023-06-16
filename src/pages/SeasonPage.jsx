@@ -25,7 +25,9 @@ function SeasonPage ({ season, series, seriesGenres }) {
   const scroller = { scrollReset, setScrollReset }
   async function callEpisode_Info () {
     let response = await fetch(
-      `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${series.id}/season/${
+        season.season_number
+      }?api_key=${process.env.NODE_ENV.apiKey || apiKey}&language=en-US`
     )
     response = await response.json()
     setSeriesCombined_list(prev => {
@@ -38,19 +40,25 @@ function SeasonPage ({ season, series, seriesGenres }) {
     })
     setSeasonInfo(response)
     response = await fetch(
-      `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}/credits?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${series.id}/season/${
+        season.season_number
+      }/credits?api_key=${process.env.NODE_ENV.apiKey || apiKey}&language=en-US`
     )
     response = await response.json()
     setCast([...response.cast, ...response.crew])
     response = await fetch(
-      `https://api.themoviedb.org/3/tv/${series.id}/season/${season.season_number}/videos?api_key=${apiKey}&language=en-US`
+      `https://api.themoviedb.org/3/tv/${series.id}/season/${
+        season.season_number
+      }/videos?api_key=${process.env.NODE_ENV.apiKey || apiKey}&language=en-US`
     )
     response = await response.json()
     setRelatedVideos(response.results)
     response = response.results.find(item => item.type === 'Trailer')
     setLocalTrailer(response)
     response = await fetch(
-      `https://api.themoviedb.org/3/tv/${series.id}/recommendations?api_key=${apiKey}&language=en-US&page=1`
+      `https://api.themoviedb.org/3/tv/${series.id}/recommendations?api_key=${
+        process.env.NODE_ENV.apiKey || apiKey
+      }&language=en-US&page=1`
     )
     response = await response.json()
     setSimilarSeries(response.results)
