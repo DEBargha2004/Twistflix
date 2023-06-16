@@ -51,7 +51,7 @@ function App () {
     return bool
   }
 
-  function callVideos_Set (x) {
+  function callVideos_Set () {
     setHero([])
     setTrailer([])
     randomArray.map(async (number, index) => {
@@ -62,7 +62,6 @@ function App () {
       response = await response.json()
       const Trailer = response.results.find(item => item.type === 'Trailer')
 
-      console.log(number, index, selectedItem.title, response.results)
       setTrailer(prev => {
         const prev_clone = _.cloneDeep(prev)
         prev_clone[index] = Trailer
@@ -77,7 +76,6 @@ function App () {
     seriesRandomArray.map(async (number, index) => {
       let selectedItem = seriesCombined_list[number]
       setSeriesHero(prev => [...prev, selectedItem])
-      // console.log('this is the selected item',selectedItem);
       let response = await fetch(urls.videosUrl('series', selectedItem.id))
       response = await response.json()
       const Trailer = response.results.find(item => item.type === 'Trailer')

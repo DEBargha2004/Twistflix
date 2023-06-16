@@ -21,7 +21,6 @@ function Hero () {
   const [inHome, setInHome] = useState(location.pathname === '/')
 
   function changeBy (val) {
-    console.log(inHome)
     let newIndex = (inHome ? Index : seriesIndex) + val
     if (newIndex < 0) {
       inHome ? setIndex(hero.length - 1) : setSeriesIndex(seriesHero.length - 1)
@@ -33,7 +32,6 @@ function Hero () {
   }
 
   function setMediaIndex (index) {
-    console.log('setMediaIndex is called')
     inHome ? setIndex(index) : setSeriesIndex(index)
   }
   return inHome ? (
