@@ -1,4 +1,4 @@
-import { apiKey } from './apiKey'
+// import { apiKey } from './apiKey'
 
 const urls = {
   genres: `https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.NODE_ENV.apiKey || apiKey}&language=en-US`,
