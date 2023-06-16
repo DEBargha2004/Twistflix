@@ -5,7 +5,7 @@ import urls from '../assets/url'
 import Percent_svg from '../components/Percent_svg'
 import Row from '../components/Row'
 import { similar } from '../functions/similar'
-import { apiKey } from '../assets/apiKey'
+// import { apiKey } from '../assets/apiKey'
 import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
 import PageHeader from '../components/PageHeader'
 

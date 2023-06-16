@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
 import MovieContext from '../hooks/context'
 import Row from '../components/Row'
-import { apiKey } from '../assets/apiKey'
+// import { apiKey } from '../assets/apiKey'
 import urls from '../assets/url'
 import Percent_svg from '../components/Percent_svg'
 import { useNavigate } from 'react-router-dom'

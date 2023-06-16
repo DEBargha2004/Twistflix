@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { apiKey } from '../assets/apiKey'
+// import { apiKey } from '../assets/apiKey'
 import urls from '../assets/url'
 import MovieContext from '../hooks/context'
 import Row from '../components/Row'
