@@ -37,7 +37,8 @@ function App () {
   const [Index, setIndex] = useState(0)
   const [seriesIndex, setSeriesIndex] = useState(0)
   const [inView, setInView] = useState(null)
-
+  const [refresh, setRefresh] = useState(0)
+  let x = 0
   function movieListChecker (arr) {
     let bool = false
     for (let i = 0; i < arr.length; i++) {
@@ -50,16 +51,23 @@ function App () {
     return bool
   }
 
-  function callVideos_Set () {
+  function callVideos_Set (x) {
     setHero([])
     setTrailer([])
     randomArray.map(async (number, index) => {
       let selectedItem = combined_list[number]
       setHero(prev => [...prev, selectedItem])
+
       let response = await fetch(urls.videosUrl('movie', selectedItem.id))
       response = await response.json()
       const Trailer = response.results.find(item => item.type === 'Trailer')
-      setTrailer(prev => [...prev, Trailer])
+
+      console.log(number, index, selectedItem.title, response.results)
+      setTrailer(prev => {
+        const prev_clone = _.cloneDeep(prev)
+        prev_clone[index] = Trailer
+        return [...prev_clone]
+      })
     })
   }
 
@@ -69,10 +77,15 @@ function App () {
     seriesRandomArray.map(async (number, index) => {
       let selectedItem = seriesCombined_list[number]
       setSeriesHero(prev => [...prev, selectedItem])
+      // console.log('this is the selected item',selectedItem);
       let response = await fetch(urls.videosUrl('series', selectedItem.id))
       response = await response.json()
       const Trailer = response.results.find(item => item.type === 'Trailer')
-      setSeriesTrailer(prev => [...prev, Trailer])
+      setSeriesTrailer(prev => {
+        const prev_clone = _.cloneDeep(prev)
+        prev_clone[index] = Trailer
+        return [...prev_clone]
+      })
     })
   }
   // movies related start
@@ -95,7 +108,8 @@ function App () {
         } // id changing multiple times
       }
     }
-  }, [genres])
+    // setRefresh(false)
+  }, [genres, refresh])
 
   useEffect(() => {
     setRandomArray(uniqueRandomNum(7, 380))
@@ -116,7 +130,7 @@ function App () {
   }, [combined_list])
 
   useEffect(() => {
-    if (randomArray.length && combined_list.length >= 380) {
+    if (randomArray.length && combined_list.length) {
       callVideos_Set()
     }
   }, [randomArray, combined_list])
@@ -148,7 +162,10 @@ function App () {
         }
       }
     }
-  }, [seriesGenres])
+    // setRefresh(false)
+  }, [seriesGenres, refresh])
+
+  //getting from cache start
 
   useEffect(() => {
     const series = JSON.parse(localStorage.getItem('saved_series'))
@@ -157,21 +174,37 @@ function App () {
     }
   }, [])
 
+  //getting from cache end
+
+  //caching start
+
   useEffect(() => {
     setSeriesRandomArray(uniqueRandomNum(7, seriesCombined_list.length))
     if (seriesCombined_list.length) {
-      // caching
       localStorage.setItem('saved_series', JSON.stringify(seriesCombined_list))
     }
   }, [seriesCombined_list])
 
+  //caching end
+
+  //calling the series trailers
+
   useEffect(() => {
-    if (seriesRandomArray.length && seriesHero.length != 7) {
+    if (seriesRandomArray.length && seriesCombined_list.length) {
       callSeriesVideos_Set()
     }
   }, [seriesRandomArray, seriesCombined_list])
 
   // series related end
+
+  useEffect(() => {
+    if (!combined_list.length) {
+      setRefresh(prev => prev + 1)
+    }
+    if (!seriesCombined_list.length) {
+      setRefresh(prev => prev + 1)
+    }
+  }, [location.pathname])
 
   return (
     <MovieContext.Provider
@@ -210,11 +243,7 @@ function App () {
           return (
             <Route
               key={index}
-              path={
-                item.card_type
-                  ? `person/${item.id}`
-                  : `/${item.id}`
-              }
+              path={item.card_type ? `person/${item.id}` : `/${item.id}`}
               element={
                 item.card_type ? (
                   <CastPage key={index} Cast={item} />
@@ -245,7 +274,7 @@ function App () {
             return series.seasons.map((season, season_index) => {
               return (
                 <Route
-                key={season.id}
+                  key={season.id}
                   path={`/tv/${series.id}/${season.id}`}
                   element={
                     <SeasonPage
@@ -266,7 +295,7 @@ function App () {
                 return season.episodes.map((episode, episode_index) => {
                   return (
                     <Route
-                    key={episode.id}
+                      key={episode.id}
                       path={`/tv/${series.id}/${season.id}/${episode.id}`}
                       element={
                         <EpisodePage

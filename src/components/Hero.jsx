@@ -21,6 +21,7 @@ function Hero () {
   const [inHome, setInHome] = useState(location.pathname === '/')
 
   function changeBy (val) {
+    console.log(inHome)
     let newIndex = (inHome ? Index : seriesIndex) + val
     if (newIndex < 0) {
       inHome ? setIndex(hero.length - 1) : setSeriesIndex(seriesHero.length - 1)
@@ -29,6 +30,11 @@ function Hero () {
     } else {
       inHome ? setIndex(newIndex) : setSeriesIndex(newIndex)
     }
+  }
+
+  function setMediaIndex (index) {
+    console.log('setMediaIndex is called')
+    inHome ? setIndex(index) : setSeriesIndex(index)
   }
   return inHome ? (
     <>
@@ -62,9 +68,7 @@ function Hero () {
               </button>
               <button
                 className='text-lg text-white px-4 py-2 rounded-sm hover:bg-[#00000080] transition-all'
-                onClick={() =>
-                  navigate(`/${hero[Index]?.id}`)
-                }
+                onClick={() => navigate(`/${hero[Index]?.id}`)}
               >
                 Info
               </button>
@@ -130,11 +134,7 @@ function Hero () {
               </button>
               <button
                 className='text-lg text-white px-4 py-2 rounded-sm hover:bg-[#00000080] transition-all'
-                onClick={() =>
-                  navigate(
-                    `/tv/${seriesHero[seriesIndex]?.id}`
-                  )
-                }
+                onClick={() => navigate(`/tv/${seriesHero[seriesIndex]?.id}`)}
               >
                 Info
               </button>
@@ -160,9 +160,11 @@ function Hero () {
         {seriesHero.map((item, index) => (
           <div
             className={`h-2 w-2 rounded-full ${
-              index === seriesIndex ? 'bg-white scale-150' : 'bg-slate-500 scale-75'
+              index === seriesIndex
+                ? 'bg-white scale-150'
+                : 'bg-slate-500 scale-75'
             } mx-[6px] cursor-pointer hover:scale-150 transition-all duration-300 ease-out`}
-            onClick={() => setIndex(index)}
+            onClick={() => setSeriesIndex(index)}
             key={index}
           />
         ))}
