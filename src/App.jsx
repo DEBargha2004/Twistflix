@@ -19,7 +19,6 @@ import EpisodePage from './pages/EpisodePage'
 import { combineSeries } from './functions/combineSeries'
 import _ from 'lodash'
 
-console.log(import.meta.env.VITE_apiKey);
 
 function App () {
   const location = useLocation()
