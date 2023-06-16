@@ -5,7 +5,7 @@ import MovieContext from '../hooks/context'
 import genre from '../functions/genre'
 import { useNavigate, useLocation } from 'react-router-dom'
 import seasonContext from '../hooks/seasonContext'
-// import { apiKey } from '../assets/apiKey'
+// import { apiKey } from '../assets/import.meta.env.VITE_apiKey'
 import Row from '../components/Row'
 import _ from 'lodash'
 import { handleGlobalPlayer } from '../functions/handleGlobalPlayer'
@@ -37,14 +37,14 @@ function WebSeriesPage ({ movieItem, row }) {
   async function callSeriesCast_Videos () {
     let response = await fetch(
       `https://api.themoviedb.org/3/tv/${movieItem.id}/credits?api_key=${
-        process.env.NODE_ENV.apiKey || apiKey
+        import.meta.env.VITE_apiKey
       }&language=en-US`
     )
     response = await response.json()
     setCast([...response.cast, ...response.crew])
     response = await fetch(
       `https://api.themoviedb.org/3/tv/${movieItem.id}?api_key=${
-        process.env.NODE_ENV.apiKey || apiKey
+        import.meta.env.VITE_apiKey
       }&language=en-US`
     )
     response = await response.json()
@@ -56,7 +56,7 @@ function WebSeriesPage ({ movieItem, row }) {
     })
     response = await fetch(
       `https://api.themoviedb.org/3/tv/${movieItem.id}/videos?api_key=${
-        process.env.NODE_ENV.apiKey || apiKey
+        import.meta.env.VITE_apiKey
       }&language=en-US`
     )
     response = await response.json()
@@ -67,7 +67,7 @@ function WebSeriesPage ({ movieItem, row }) {
       `https://api.themoviedb.org/3/tv/${
         movieItem.id
       }/recommendations?api_key=${
-        process.env.NODE_ENV.apiKey || apiKey
+        import.meta.env.VITE_apiKey
       }&language=en-US&page=1`
     )
     response = await response.json()

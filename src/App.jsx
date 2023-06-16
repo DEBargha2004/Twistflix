@@ -19,6 +19,7 @@ import EpisodePage from './pages/EpisodePage'
 import { combineSeries } from './functions/combineSeries'
 import _ from 'lodash'
 
+
 function App () {
   const location = useLocation()
   let [genres, setGenres] = useState([])

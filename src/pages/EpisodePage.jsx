@@ -25,7 +25,7 @@ function EpisodePage ({ season, series, episode, seriesGenres }) {
       `https://api.themoviedb.org/3/tv/${series.id}/season/${
         season.season_number
       }/episode/${episode.episode_number}/credits?api_key=${
-        process.env.NODE_ENV.apiKey || apiKey
+        import.meta.env.VITE_apiKey
       }&language=en-US`
     )
     response = await response.json()
@@ -34,7 +34,7 @@ function EpisodePage ({ season, series, episode, seriesGenres }) {
       `https://api.themoviedb.org/3/tv/${series.id}/season/${
         season.season_number
       }/episode/${episode.episode_number}/videos?api_key=${
-        process.env.NODE_ENV.apiKey || apiKey
+        import.meta.env.VITE_apiKey
       }&language=en-US`
     )
     response = await response.json()
@@ -43,7 +43,7 @@ function EpisodePage ({ season, series, episode, seriesGenres }) {
     setLocalTrailer(response)
     response = await fetch(
       `https://api.themoviedb.org/3/tv/${series.id}/recommendations?api_key=${
-        process.env.NODE_ENV.apiKey || apiKey
+        import.meta.env.VITE_apiKey
       }&language=en-US`
     )
     response = await response.json()
