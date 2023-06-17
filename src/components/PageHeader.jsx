@@ -37,7 +37,7 @@ function PageHeader ({
           >
             <img
               src={`${urls.baseUrl}${main_img}`}
-              className='w-[400px] hover:scale-105 transition-all duration-[600ms] hover:opacity-70'
+              className='w-full hover:scale-105 transition-all duration-[600ms] hover:opacity-70'
               alt=''
             />
           </div>
@@ -99,9 +99,9 @@ function PageHeader ({
             ) : null}
           </div>
           <i className='text-gray-300 my-2'>{tagline}</i>
-          <div>
+          <div className=''>
             <p className='text-lg font-semibold my-2 text-white'>Overview</p>
-            <p className='text-white text-[15px] w-[844px]'>{overview}</p>
+            <p className='text-white flex-wrap text-[15px] w-full'>{overview}</p>
           </div>
         </div>
       </div>

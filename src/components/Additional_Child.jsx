@@ -27,7 +27,7 @@ function Additional_Child ({ Title, id, route }) {
           mouseEnter || inView === id
             ? '-translate-y-2 opacity-100'
             : 'opacity-70'
-        } transition-all duration-200 ease-out`}
+        } transition-all duration-200 ease-out whitespace-nowrap`}
       >
         {Title}
       </span>
