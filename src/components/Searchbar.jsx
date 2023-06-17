@@ -56,10 +56,11 @@ function Searchbar () {
     item.title || item.known_for
       ? item.known_for
         ? navigate(`/person/${item.id}`)
-        : navigate(`/movie/${item.id}`)
+        : navigate(`/${item.id}`)
       : navigate(`/tv/${item.id}`)
     setIsFocused(false)
   }
+
   useEffect(() => {
     if (isClicked) {
       setTimeout(() => {
